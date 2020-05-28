@@ -1,2 +1,2 @@
-my leetcode solutions, most of them are in Rust.
+my leetcode solutions, mostly in Rust.
 
