@@ -34,7 +34,9 @@ impl Solution {
         while nodes.len() > 0 {
             let mut values = vec![];
             let mut next_nodes = vec![];
-            for node in &nodes {
+            let mut idx = nodes.len() - 1;
+            loop {
+                let node = &nodes[idx];
                 values.push(node.borrow().val);
                 if reversed {
                     if let Some(r) = node.borrow().right.clone() {
@@ -51,8 +53,12 @@ impl Solution {
                         next_nodes.push(r)
                     }
                 }
+                if idx > 0 {
+                    idx -= 1;
+                } else {
+                    break;
+                }
             }
-            next_nodes.reverse();
             nodes = next_nodes;
             result.push(values);
             reversed = !reversed;
@@ -63,5 +69,7 @@ impl Solution {
 }
 
 fn main() {
-    // TODO
+    for a in 3..0 {
+        println!("{}", a);
+    }
 }
