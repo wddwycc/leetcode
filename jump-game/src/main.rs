@@ -1,37 +1,12 @@
 pub fn can_jump(nums: Vec<i32>) -> bool {
-    let len = nums.len();
-    if len == 0 {
-        return false;
-    }
-    if len == 1 {
-        return true;
-    }
-
-    let mut good_idx_set = std::collections::HashSet::new();
-    good_idx_set.insert(len - 1);
-
-    let mut good_idx = vec![len - 1];
-    while let Some(idx) = good_idx.pop() {
-        let mut j = idx - 1;
-        loop {
-            if (nums[j] as usize) >= idx - j {
-                if j == 0 {
-                    return true;
-                } else {
-                    if !good_idx_set.contains(&j) {
-                        good_idx_set.insert(j);
-                        good_idx.push(j);
-                    }
-                }
-            }
-            if j == 0 {
-                break;
-            } else {
-                j -= 1;
-            }
+    let mut step = vec![0; nums.len()];
+    for i in 1..nums.len() {
+        step[i] = step[i - 1].max(nums[i - 1]) - 1;
+        if step[i] < 0 {
+            return false;
         }
     }
-    return false;
+    true
 }
 
 fn main() {
