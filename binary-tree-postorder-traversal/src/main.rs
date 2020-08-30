@@ -23,28 +23,27 @@ impl TreeNode {
 struct Solution;
 impl Solution {
     pub fn postorder_traversal(root: Option<Rc<RefCell<TreeNode>>>) -> Vec<i32> {
-        match root {
+        let root = match root {
+            Some(root) => root,
             None => return vec![],
-            Some(root) => {
-                let mut stack1 = vec![root];
-                let mut stack2 = vec![];
-                while let Some(node) = stack1.pop() {
-                    // TODO
-                    if let Some(left) = node.borrow().left.clone() {
-                        stack1.push(left)
-                    }
-                    if let Some(right) = node.borrow().right.clone() {
-                        stack1.push(right)
-                    }
-                    stack2.push(node);
-                }
-                let mut result = vec![];
-                while let Some(node) = stack2.pop() {
-                    result.push(node.borrow().val);
-                }
-                return result;
+        };
+
+        let mut stack1 = vec![root];
+        let mut stack2 = vec![];
+        while let Some(node) = stack1.pop() {
+            if let Some(left) = node.borrow().left.clone() {
+                stack1.push(left)
             }
+            if let Some(right) = node.borrow().right.clone() {
+                stack1.push(right)
+            }
+            stack2.push(node);
         }
+        let mut result = vec![];
+        while let Some(node) = stack2.pop() {
+            result.push(node.borrow().val);
+        }
+        return result;
     }
 }
 
