@@ -1,23 +1,20 @@
-use std::collections::HashMap;
-
+#[derive(Default)]
 struct Trie {
-    data: HashMap<char, Trie>,
+    data: [Option<Box<Trie>>; 26],
     is_word: bool
 }
 
 impl Trie {
     /** Initialize your data structure here. */
     fn new() -> Self {
-        Self {
-            data: HashMap::new(),
-            is_word: false
-        }
+        Default::default()
     }
     /** Inserts a word into the trie. */
     fn insert(&mut self, word: String) {
         let mut cur = self;
         for c in word.chars() {
-            cur = cur.data.entry(c).or_insert(Trie::new());
+            let idx = (c as i8 - 'a' as i8) as usize;
+            cur = cur.data[idx].get_or_insert_with(|| Box::new(Trie::new()));
         }
         cur.is_word = true;
     }
@@ -25,7 +22,8 @@ impl Trie {
     fn search(&self, word: String) -> bool {
         let mut cur = self;
         for c in word.chars() {
-            match cur.data.get(&c) {
+            let idx = (c as i8 - 'a' as i8) as usize;
+            match cur.data[idx].as_ref() {
                 Some(a) => cur = a,
                 None => return false
             }
@@ -36,12 +34,13 @@ impl Trie {
     fn starts_with(&self, prefix: String) -> bool {
         let mut cur = self;
         for c in prefix.chars() {
-            match cur.data.get(&c) {
+            let idx = (c as i8 - 'a' as i8) as usize;
+            match &cur.data[idx] {
                 Some(a) => cur = a,
                 None => return false
             }
         }
-        cur.is_word || cur.data.len() > 0 
+        true
     }
 }
 
