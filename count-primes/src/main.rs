@@ -1,3 +1,5 @@
+// Sieve of Eratosthenes
+// time complexity: O(n log log n)
 pub fn count_primes(n: i32) -> i32 {
     let n = n as usize;
     if n <= 2 {
