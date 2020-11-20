@@ -1,7 +1,7 @@
 #[derive(Default)]
 pub struct Trie {
     pub children: [Option<Box<Trie>>; 26],
-    pub is_word: bool
+    pub is_word: bool,
 }
 
 impl Trie {
@@ -25,11 +25,11 @@ impl Trie {
             let idx = (c as i8 - 'a' as i8) as usize;
             match cur.children[idx].as_ref() {
                 Some(a) => cur = a,
-                None => return None
+                None => return None,
             }
             chars.push(c);
             if cur.is_word {
-                return Some(chars.into_iter().collect())
+                return Some(chars.into_iter().collect());
             }
         }
         return None;
@@ -43,18 +43,23 @@ impl Solution {
         for word in dictionary {
             trie.insert(word)
         }
-        let words: Vec<String> = sentence.split(' ').map(|w| trie.get_root(w).unwrap_or(w.to_string())).collect();
-        return words.join(" ");
+        sentence
+            .split(' ')
+            .map(|w| trie.get_root(w).unwrap_or(w.to_string()))
+            .collect::<Vec<String>>()
+            .join(" ")
     }
 }
-
 
 #[cfg(test)]
 mod tests {
     use super::*;
     #[test]
     fn it_works() {
-        let res = Solution::replace_words(vec!["cat".to_string(), "bat".to_string(),"rat".to_string()], "the cattle was rattled by the battery".to_string());
+        let res = Solution::replace_words(
+            vec!["cat".to_string(), "bat".to_string(), "rat".to_string()],
+            "the cattle was rattled by the battery".to_string(),
+        );
         assert_eq!(res, "the cat was rat by the bat".to_string());
     }
 }
