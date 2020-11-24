@@ -1,1 +1,1 @@
-LeetCode solutions by me([wddwycc](https://leetcode.com/wddwycc/)), mostly in Rust.
+my([wddwycc](https://leetcode.com/wddwycc/)) LeetCode solutions, mostly in Rust.
