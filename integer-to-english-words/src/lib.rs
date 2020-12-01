@@ -1,6 +1,6 @@
 pub struct Solution {}
 impl Solution {
-    fn digit(num: i32) -> Option<String> {
+    fn one_digit_repr(num: i32) -> Option<String> {
         match num {
             0 => None,
             1 => Some("One".into()),
@@ -16,9 +16,9 @@ impl Solution {
         }
     }
 
-    fn two_digits(num1: i32, num2: i32) -> Option<String> {
+    fn two_digit_repr(num1: i32, num2: i32) -> Option<String> {
         match (num1, num2) {
-            (0, num2) => Self::digit(num2),
+            (0, num2) => Self::one_digit_repr(num2),
             (1, 0) => Some("Ten".into()),
             (1, 1) => Some("Eleven".into()),
             (1, 2) => Some("Twelve".into()),
@@ -41,33 +41,33 @@ impl Solution {
                     9 => "Ninety".into(),
                     _ => panic!(),
                 };
-                if let Some(snd_repr) = Self::digit(snd) {
-                    return Some(format!("{} {}", fst_repr, snd_repr));
+                if let Some(snd_repr) = Self::one_digit_repr(snd) {
+                    return Some([fst_repr, snd_repr].join(" "));
                 } else {
-                    return Some(fst_repr.into());
+                    return Some(fst_repr);
                 };
             }
         }
     }
 
-    fn three_digits(num1: i32, num2: i32, num3: i32) -> Option<String> {
-        match Self::digit(num1) {
-            None => Self::two_digits(num2, num3),
+    fn three_digit_repr(num1: i32, num2: i32, num3: i32) -> Option<String> {
+        match Self::one_digit_repr(num1) {
+            None => Self::two_digit_repr(num2, num3),
             Some(fst_repr) => {
-                if let Some(snd_repr) = Self::two_digits(num2, num3) {
-                    return Some(format!("{} Hundred {}", fst_repr, snd_repr));
+                if let Some(snd_repr) = Self::two_digit_repr(num2, num3) {
+                    return Some([fst_repr, "Hundred".to_string(), snd_repr].join(" "));
                 } else {
-                    return Some(format!("{} Hundred", fst_repr));
+                    return Some([fst_repr, "Hundred".to_string()].join(" "));
                 };
             }
         }
     }
 
-    fn number_to_hundred(num: i32) -> Option<String> {
+    fn hundred_num_repr(num: i32) -> Option<String> {
         match num {
-            a @ 0..=9 => Self::digit(a),
-            a @ 10..=99 => Self::two_digits(a / 10, a % 10),
-            a @ 100..=999 => Self::three_digits(a / 100, (a - (a / 100 * 100)) / 10, a % 10),
+            a @ 0..=9 => Self::one_digit_repr(a),
+            a @ 10..=99 => Self::two_digit_repr(a / 10, a % 10),
+            a @ 100..=999 => Self::three_digit_repr(a / 100, (a - (a / 100 * 100)) / 10, a % 10),
             _ => panic!(),
         }
     }
@@ -75,49 +75,58 @@ impl Solution {
     pub fn number_to_words(num: i32) -> String {
         let res = match num {
             0 => vec![Some("Zero".to_string())],
-            a @ 1..=999 => vec![Self::number_to_hundred(a)],
+            a @ 1..=999 => vec![Self::hundred_num_repr(a)],
             a @ 1_000..=999_999 => vec![
-                Self::number_to_hundred(a / 1_000),
+                Self::hundred_num_repr(a / 1_000),
                 Some("Thousand".to_string()),
-                Self::number_to_hundred(a % 1_000),
+                Self::hundred_num_repr(a % 1_000),
             ],
-            a @ 1_000_000..=999_999_999 => vec![
-                Self::number_to_hundred(a / 1_000_000),
-                Some("Million".to_string()),
-                Self::number_to_hundred((a - (a / 1_000_000 * 1_000_000)) / 1_000),
-                {
-                    if (a - (a / 1_000_000 * 1_000_000)) / 1_000 > 0 {
-                        Some("Thousand".to_string())
-                    } else {
-                        None
-                    }
-                },
-                Self::number_to_hundred(a % 1_000),
-            ],
-            a => vec![
-                Self::number_to_hundred(a / 1_000_000_000),
-                Some("Billion".to_string()),
-                Self::number_to_hundred((a - (a / 1_000_000_000 * 1_000_000_000)) / 1_000_000),
-                {
-                    if (a - (a / 1_000_000_000 * 1_000_000_000)) / 1_000_000 > 0 {
-                        Some("Million".to_string())
-                    } else {
-                        None
-                    }
-                },
-                Self::number_to_hundred((a - (a / 1_000_000 * 1_000_000)) / 1_000),
-                {
-                    if (a - (a / 1_000_000 * 1_000_000)) / 1_000 > 0 {
-                        Some("Thousand".to_string())
-                    } else {
-                        None
-                    }
-                },
-                Self::number_to_hundred(a % 1_000),
-            ],
+            a @ 1_000_000..=999_999_999 => {
+                let thousand_v = (a - (a / 1_000_000 * 1_000_000)) / 1_000;
+                vec![
+                    Self::hundred_num_repr(a / 1_000_000),
+                    Some("Million".to_string()),
+                    Self::hundred_num_repr(thousand_v),
+                    {
+                        if thousand_v > 0 {
+                            Some("Thousand".to_string())
+                        } else {
+                            None
+                        }
+                    },
+                    Self::hundred_num_repr(a % 1_000),
+                ]
+            }
+            a => {
+                let million_v = (a - (a / 1_000_000_000 * 1_000_000_000)) / 1_000_000;
+                let thousand_v = (a - (a / 1_000_000 * 1_000_000)) / 1_000;
+                vec![
+                    Self::hundred_num_repr(a / 1_000_000_000),
+                    Some("Billion".to_string()),
+                    Self::hundred_num_repr(million_v),
+                    {
+                        if million_v > 0 {
+                            Some("Million".to_string())
+                        } else {
+                            None
+                        }
+                    },
+                    Self::hundred_num_repr(thousand_v),
+                    {
+                        if thousand_v > 0 {
+                            Some("Thousand".to_string())
+                        } else {
+                            None
+                        }
+                    },
+                    Self::hundred_num_repr(a % 1_000),
+                ]
+            }
         };
-        let res: Vec<String> = res.into_iter().filter_map(|a| a).collect();
-        res.join(" ")
+        res.into_iter()
+            .filter_map(|a| a)
+            .collect::<Vec<String>>()
+            .join(" ")
     }
 }
 
