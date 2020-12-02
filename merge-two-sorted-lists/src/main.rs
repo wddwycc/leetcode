@@ -20,8 +20,7 @@ impl Solution {
     ) -> Option<Box<ListNode>> {
         match (l1, l2) {
             (None, None) => None,
-            (Some(a), None) => Some(a),
-            (None, Some(b)) => Some(b),
+            (Some(a), None) | (None, Some(a)) => Some(a),
             (Some(mut a), Some(mut b)) => {
                 if a.val > b.val {
                     b.next = Self::merge_two_lists(b.next, Some(a));
