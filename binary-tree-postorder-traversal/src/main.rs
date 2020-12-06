@@ -20,30 +20,55 @@ impl TreeNode {
     }
 }
 
+pub enum NodeState {
+    NoAsk,
+    LeftSeen,
+    RightSeen,
+}
+
 struct Solution;
 impl Solution {
-    pub fn postorder_traversal(root: Option<Rc<RefCell<TreeNode>>>) -> Vec<i32> {
+    pub fn iteratively(root: Option<Rc<RefCell<TreeNode>>>) -> Vec<i32> {
         let root = match root {
             Some(root) => root,
             None => return vec![],
         };
 
-        let mut stack1 = vec![root];
-        let mut stack2 = vec![];
-        while let Some(node) = stack1.pop() {
-            if let Some(left) = node.borrow().left.clone() {
-                stack1.push(left)
+        let mut res = vec![];
+        let mut stack = vec![(root, NodeState::NoAsk)];
+        while let Some((node, state)) = stack.pop().as_ref() {
+            match state {
+                NodeState::NoAsk => {
+                    stack.push((node.clone(), NodeState::LeftSeen));
+                    if let Some(ref l) = node.borrow().left {
+                        stack.push((l.clone(), NodeState::NoAsk));
+                    }
+                }
+                NodeState::LeftSeen => {
+                    stack.push((node.clone(), NodeState::RightSeen));
+                    if let Some(ref r) = node.borrow().right {
+                        stack.push((r.clone(), NodeState::NoAsk));
+                    }
+                }
+                NodeState::RightSeen => {
+                    res.push(node.borrow().val);
+                }
             }
-            if let Some(right) = node.borrow().right.clone() {
-                stack1.push(right)
-            }
-            stack2.push(node);
         }
-        let mut result = vec![];
-        while let Some(node) = stack2.pop() {
-            result.push(node.borrow().val);
-        }
-        return result;
+        res
+    }
+
+    pub fn recursively(root: Option<Rc<RefCell<TreeNode>>>) -> Vec<i32> {
+        let root = match root {
+            Some(root) => root,
+            None => return vec![],
+        };
+
+        let mut res = vec![];
+        res.append(&mut Self::recursively(root.borrow().left.clone()));
+        res.append(&mut Self::recursively(root.borrow().right.clone()));
+        res.push(root.borrow().val);
+        res
     }
 }
 
