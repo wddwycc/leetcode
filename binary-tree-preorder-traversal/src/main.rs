@@ -55,8 +55,8 @@ impl Solution {
 
         let mut res = vec![];
         res.push(root.borrow().val);
-        res.append(&mut Self::preorder_traversal(root.borrow().left.clone()));
-        res.append(&mut Self::preorder_traversal(root.borrow().right.clone()));
+        res.append(&mut Self::recursively(root.borrow().left.clone()));
+        res.append(&mut Self::recursively(root.borrow().right.clone()));
         res
     }
 }

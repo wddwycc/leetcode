@@ -20,29 +20,30 @@ impl TreeNode {
     }
 }
 
-struct Solution;
+pub struct Solution;
 impl Solution {
-    pub fn inorder_traversal(root: Option<Rc<RefCell<TreeNode>>>) -> Vec<i32> {
+    pub fn iteratively(root: Option<Rc<RefCell<TreeNode>>>) -> Vec<i32> {
         let root = match root {
-            None => return vec![],
             Some(a) => a,
+            None => return vec![],
         };
+
+        let mut res = vec![];
         let mut stack = vec![(root, false)];
-        let mut result = vec![];
-        while let Some((node, left_seen)) = stack.pop() {
+        while let Some((ref node, left_seen)) = stack.pop() {
             if left_seen {
-                result.push(node.borrow().val);
-                if let Some(right) = node.borrow().right.clone() {
-                    stack.push((right, false))
-                }
+                res.push(node.borrow().val);
+                if let Some(ref r) = node.borrow().right {
+                    stack.push((r.clone(), false));
+                };
             } else {
                 stack.push((node.clone(), true));
-                if let Some(left) = node.borrow().left.clone() {
-                    stack.push((left, false))
-                }
+                if let Some(ref l) = node.borrow().left {
+                    stack.push((l.clone(), false));
+                };
             }
         }
-        result
+        res
     }
 
     pub fn recursively(root: Option<Rc<RefCell<TreeNode>>>) -> Vec<i32> {
