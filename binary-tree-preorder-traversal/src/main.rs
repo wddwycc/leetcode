@@ -20,26 +20,44 @@ impl TreeNode {
     }
 }
 
-struct Solution;
+/// Ref: https://leetcode.com/problems/binary-tree-preorder-traversal/discuss/657035/Rust-DFS-iteratively-recursively
+pub struct Solution;
 impl Solution {
     pub fn preorder_traversal(root: Option<Rc<RefCell<TreeNode>>>) -> Vec<i32> {
-        match root {
+        Self::recursively(root)
+    }
+
+    fn iteratively(root: Option<Rc<RefCell<TreeNode>>>) -> Vec<i32> {
+        let root = match root {
+            Some(a) => a,
             None => return vec![],
-            Some(root) => {
-                let mut result = vec![];
-                let mut stack = vec![root];
-                while let Some(node) = stack.pop() {
-                    result.push(node.borrow().val);
-                    if let Some(right) = node.borrow().right.clone() {
-                        stack.push(right)
-                    }
-                    if let Some(left) = node.borrow().left.clone() {
-                        stack.push(left)
-                    }
-                }
-                return result;
+        };
+
+        let mut res = vec![];
+        let mut stack = vec![root];
+        while let Some(node) = stack.pop() {
+            res.push(node.borrow().val);
+            if let Some(ref r) = node.borrow().right {
+                stack.push(r.clone());
+            }
+            if let Some(ref l) = node.borrow().left {
+                stack.push(l.clone());
             }
         }
+        res
+    }
+
+    pub fn recursively(root: Option<Rc<RefCell<TreeNode>>>) -> Vec<i32> {
+        let root = match root {
+            Some(a) => a,
+            None => return vec![],
+        };
+
+        let mut res = vec![];
+        res.push(root.borrow().val);
+        res.append(&mut Self::preorder_traversal(root.borrow().left.clone()));
+        res.append(&mut Self::preorder_traversal(root.borrow().right.clone()));
+        res
     }
 }
 
