@@ -44,6 +44,19 @@ impl Solution {
         }
         result
     }
+
+    pub fn recursively(root: Option<Rc<RefCell<TreeNode>>>) -> Vec<i32> {
+        let root = match root {
+            Some(a) => a,
+            None => return vec![],
+        };
+
+        let mut res = vec![];
+        res.append(&mut Self::recursively(root.borrow().left.clone()));
+        res.push(root.borrow().val);
+        res.append(&mut Self::recursively(root.borrow().right.clone()));
+        res
+    }
 }
 
 fn main() {
