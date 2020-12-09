@@ -48,6 +48,23 @@ impl Codec {
         res.join(",")
     }
 
+    fn build_tree(src: &[Option<i32>], cur: &mut usize) -> Option<Rc<RefCell<TreeNode>>> {
+        if *cur >= src.len() {
+            return None;
+        }
+        if let Some(val) = src[*cur] {
+            *cur += 1;
+            Some(Rc::new(RefCell::new(TreeNode {
+                val,
+                left: Self::build_tree(src, cur),
+                right: Self::build_tree(src, cur),
+            })))
+        } else {
+            *cur += 1;
+            None
+        }
+    }
+
     pub fn deserialize(&self, data: String) -> Option<Rc<RefCell<TreeNode>>> {
         let lst: Vec<Option<i32>> = data
             .split(",")
@@ -59,30 +76,8 @@ impl Codec {
                 }
             })
             .collect();
-        let root = match lst[0] {
-            Some(a) => Rc::new(RefCell::new(TreeNode::new(a))),
-            None => return None,
-        };
-        let mut cur = 1;
-        let mut stack = vec![(root.clone(), false)];
-        while let Some((node, left_seen)) = stack.pop() {
-            if left_seen {
-                if let Some(v) = lst[cur] {
-                    let r = Rc::new(RefCell::new(TreeNode::new(v)));
-                    node.borrow_mut().right = Some(r.clone());
-                    stack.push((r.clone(), false));
-                }
-            } else {
-                stack.push((node.clone(), true));
-                if let Some(v) = lst[cur] {
-                    let l = Rc::new(RefCell::new(TreeNode::new(v)));
-                    node.borrow_mut().left = Some(l.clone());
-                    stack.push((l.clone(), false));
-                }
-            }
-            cur += 1;
-        }
-        Some(root)
+        let mut cur = 0;
+        Self::build_tree(&lst, &mut cur)
     }
 }
 
