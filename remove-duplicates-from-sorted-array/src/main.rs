@@ -1,35 +1,22 @@
-fn main() {
-    println!("Hello, world!");
+pub struct Solution;
+impl Solution {
+    pub fn remove_duplicates(nums: &mut Vec<i32>) -> i32 {
+        let mut res = 0;
+        for cur in 0..nums.len() {
+            if cur == 0 {
+                res += 1;
+                continue;
+            }
+            let num = nums[cur];
+            if num != nums[cur - 1] {
+                nums[res] = num;
+                res += 1;
+            }
+        }
+        res as i32
+    }
 }
 
-pub fn remove_duplicates(nums: &mut Vec<i32>) -> i32 {
-    let len = nums.len();
-    if len == 0 {
-        return 0;
-    }
-    let mut i = 0;
-    let mut j = 0;
-    while j < len {
-        // when duplicate
-
-        if nums[j] == nums[i] {
-            j += 1;
-            continue;
-        }
-
-        // when not duplicate
-
-        if j == i + 1 {
-            // when sibling
-            i += 1;
-            j += 1;
-            continue;
-        } else {
-            // when not sibling
-            i += 1;
-            nums[i] = nums[j];
-            j += 1;
-        }
-    }
-    (i + 1) as i32
+fn main() {
+    println!("Hello, world!");
 }
