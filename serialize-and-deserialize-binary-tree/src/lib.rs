@@ -19,7 +19,7 @@ impl TreeNode {
 use std::cell::RefCell;
 use std::rc::Rc;
 
-struct Codec {}
+pub struct Codec {}
 
 /**
  * `&self` means the method takes an immutable reference.
@@ -31,38 +31,20 @@ impl Codec {
     }
 
     pub fn serialize(&self, root: Option<Rc<RefCell<TreeNode>>>) -> String {
-        let mut res = vec![];
-        let mut stack = vec![root];
-        while let Some(node) = stack.pop() {
-            let node = match node {
-                Some(a) => a,
-                None => {
-                    res.push("null".to_string());
-                    continue;
-                }
-            };
-            res.push(node.borrow().val.to_string());
-            stack.push(node.borrow().right.clone());
-            stack.push(node.borrow().left.clone());
+        let mut res: Vec<String> = vec![];
+        let mut queue = std::collections::VecDeque::new();
+        queue.push_back(root);
+
+        while let Some(entity) = queue.pop_front() {
+            if let Some(ref node) = entity {
+                res.push(node.borrow().val.to_string());
+                queue.push_back(node.borrow().left.clone());
+                queue.push_back(node.borrow().right.clone());
+            } else {
+                res.push(String::from("null"));
+            }
         }
         res.join(",")
-    }
-
-    fn build_tree(src: &[Option<i32>], cur: &mut usize) -> Option<Rc<RefCell<TreeNode>>> {
-        if *cur >= src.len() {
-            return None;
-        }
-        if let Some(val) = src[*cur] {
-            *cur += 1;
-            Some(Rc::new(RefCell::new(TreeNode {
-                val,
-                left: Self::build_tree(src, cur),
-                right: Self::build_tree(src, cur),
-            })))
-        } else {
-            *cur += 1;
-            None
-        }
     }
 
     pub fn deserialize(&self, data: String) -> Option<Rc<RefCell<TreeNode>>> {
@@ -76,8 +58,29 @@ impl Codec {
                 }
             })
             .collect();
-        let mut cur = 0;
-        Self::build_tree(&lst, &mut cur)
+
+        let root = match lst[0] {
+            Some(a) => Rc::new(RefCell::new(TreeNode::new(a))),
+            None => return None,
+        };
+        let mut cur = 1;
+        let mut queue = std::collections::VecDeque::new();
+        queue.push_back(root.clone());
+        while let Some(node) = queue.pop_front() {
+            if let Some(a) = lst[cur] {
+                let l = Rc::new(RefCell::new(TreeNode::new(a)));
+                node.borrow_mut().left = Some(l.clone());
+                queue.push_back(l);
+            }
+            cur += 1;
+            if let Some(a) = lst[cur] {
+                let r = Rc::new(RefCell::new(TreeNode::new(a)));
+                node.borrow_mut().right = Some(r.clone());
+                queue.push_back(r);
+            }
+            cur += 1;
+        }
+        Some(root)
     }
 }
 
