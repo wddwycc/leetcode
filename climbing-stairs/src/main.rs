@@ -1,15 +1,22 @@
 pub struct Solution {}
 impl Solution {
+    /// time: O(n), space: O(1)
     pub fn climb_stairs(n: i32) -> i32 {
-        let mut ways: Vec<i32> = vec![];
-        for i in 1..=n {
-            match i {
-                1 => ways.push(1),
-                2 => ways.push(2),
-                _ => ways.push(ways[i as usize - 2] + ways[i as usize - 3]),
-            }
+        if n <= 2 {
+            return n;
         }
-        *ways.last().unwrap_or(&0)
+        // f(1) = 1
+        // f(2) = 2
+        // f(n) = f(n - 1) + f(n - 2)
+        let n = n as usize;
+        let mut v1 = 1;
+        let mut v2 = 2;
+        for _ in 3..=n {
+            let next_dp2 = v1 + v2;
+            v1 = v2;
+            v2 = next_dp2;
+        }
+        v2
     }
 }
 
