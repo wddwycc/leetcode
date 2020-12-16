@@ -20,64 +20,41 @@ impl TreeNode {
     }
 }
 
-pub enum Limit {
-    Min(i32),
-    Max(i32),
-    None,
-}
-
 pub struct Solution {}
 impl Solution {
-    pub fn is_valid_bst_recursion(
-        root: Option<Rc<RefCell<TreeNode>>>,
-        min_bound: Option<i32>,
-        max_bound: Option<i32>,
-    ) -> bool {
-        if let Some(tree) = root {
-            let tree = tree.borrow();
-            let val = tree.val;
-            let l_root = tree.left.clone();
-            let r_root = tree.right.clone();
-
-            if let Some(l) = &l_root {
-                let l_val = l.borrow().val;
-                if l_val >= val {
-                    return false;
-                }
-                if let Some(a) = min_bound {
-                    if l_val <= a {
-                        return false;
-                    }
-                }
-            }
-            if let Some(r) = &r_root {
-                let r_val = r.borrow().val;
-                if r_val <= val {
-                    return false;
-                }
-                if let Some(a) = max_bound {
-                    if r_val >= a {
-                        return false;
-                    }
-                }
-            }
-            if !Solution::is_valid_bst_recursion(l_root, min_bound, Some(val)) {
-                return false;
-            }
-            if !Solution::is_valid_bst_recursion(r_root, Some(val), max_bound) {
-                return false;
-            }
-            return true;
-        } else {
-            return true;
-        }
+    pub fn is_valid_bst(root: Option<Rc<RefCell<TreeNode>>>) -> bool {
+        Self::helper(root, None, None)
     }
 
-    pub fn is_valid_bst(root: Option<Rc<RefCell<TreeNode>>>) -> bool {
-        Solution::is_valid_bst_recursion(root, None, None)
+    fn helper(
+        root: Option<Rc<RefCell<TreeNode>>>,
+        l_bound: Option<i32>,
+        r_bound: Option<i32>,
+    ) -> bool {
+        let root = match root {
+            Some(a) => a,
+            None => return true,
+        };
+        let val = root.borrow().val;
+        if let Some(l) = l_bound {
+            if val <= l {
+                return false;
+            }
+        }
+        if let Some(r) = r_bound {
+            if val >= r {
+                return false;
+            }
+        }
+        if !Self::helper(root.borrow().left.clone(), l_bound, Some(val)) {
+            return false;
+        }
+        if !Self::helper(root.borrow().right.clone(), Some(val), r_bound) {
+            return false;
+        }
+        true
     }
 }
-
 fn main() {
     println!("Hello, world!");
 }
