@@ -16,7 +16,7 @@ impl Solution {
                 "+" => Entity::Add,
                 "-" => Entity::Minus,
                 "*" => Entity::Multiply,
-                "/" => Entity::Minus,
+                "/" => Entity::Divide,
                 a => Entity::Num(a.parse::<i32>().unwrap()),
             })
             .collect();
