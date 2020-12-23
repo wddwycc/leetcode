@@ -26,7 +26,7 @@ impl Solution {
         };
         digits.swap(i + 1, j);
         digits[0..=i].sort_by(|a, b| b.cmp(a));
-        Self::to_num(digits)
+        Self::to_num(&digits)
     }
 
     // MARK: Utils
@@ -40,20 +40,21 @@ impl Solution {
         res
     }
 
-    fn to_num(src: Vec<i32>) -> i32 {
-        // NOTE: detect boundary
-        let mut max_digits = Self::to_digits(std::i32::MAX);
-        if src.len() == max_digits.len() {
-            let src = src.clone();
-            max_digits.reverse();
-            if src > max_digits {
-                return -1;
-            }
-        }
-
+    fn to_num(src: &[i32]) -> i32 {
         let mut res = 0;
         let mut base = 1;
+        let max_base = (10 as i32).pow(9);
+        let max_base_n = 2;
         for i in src {
+            // check boundary
+            if base == max_base {
+                if i == &max_base_n && std::i32::MAX - max_base * max_base_n < res {
+                    return -1;
+                }
+                if i > &max_base_n {
+                    return -1;
+                }
+            }
             res += i * base;
             base *= 10;
         }
