@@ -1,52 +1,43 @@
-pub enum Res {
-    Success(Vec<Vec<String>>),
-    End,
-    Failure,
-}
-
 pub struct Solution;
 impl Solution {
-    fn helper(s: String) -> Res {
-        if s.len() == 0 {
-            return Res::End;
-        }
-        if s.len() == 1 {
-            return Res::Success(vec![vec![s]]);
-        }
-
-        let mut results = vec![];
-        for i in 0..s.len() {
-            let original = String::from(&s[0..=i]);
-            let rev: String = (&s[0..=i]).clone().chars().rev().collect();
-            if original == rev {
-                let rest = String::from(&s[(i + 1)..]);
-                match Self::helper(rest) {
-                    Res::Success(lst) => {
-                        for mut a in lst {
-                            let mut res = vec![];
-                            res.push(original.clone());
-                            res.append(&mut a);
-                            results.push(res);
-                        }
-                    }
-                    Res::Failure => (),
-                    Res::End => results.push(vec![original]),
-                }
+    fn is_palindrome(src: &[char], mut start: usize, mut end: usize) -> bool {
+        while start < end {
+            if src[start] == src[end] {
+                start += 1;
+                end -= 1;
+            } else {
+                return false;
             }
         }
-        if results.len() == 0 {
-            return Res::Failure;
-        } else {
-            return Res::Success(results);
+        true
+    }
+
+    fn dfs(src: &[char], start: usize, current_list: &Vec<String>, res: &mut Vec<Vec<String>>) {
+        if start > src.len() - 1 {
+            res.push(current_list.clone());
+            return;
+        }
+        for i in start..src.len() {
+            let head_is_palindrome = Self::is_palindrome(src, start, i);
+            if head_is_palindrome {
+                let next_current_list = {
+                    let mut res = current_list.clone();
+                    res.push(src[start..=i].iter().collect());
+                    res
+                };
+                Self::dfs(src, i + 1, &next_current_list, res);
+            }
         }
     }
 
     pub fn partition(s: String) -> Vec<Vec<String>> {
-        match Self::helper(s) {
-            Res::Success(a) => a,
-            Res::Failure => vec![],
-            Res::End => vec![],
+        let chars = s.chars().collect::<Vec<_>>();
+        if chars.len() == 0 {
+            return vec![];
         }
+        let mut res = vec![];
+        Self::dfs(&chars, 0, &vec![], &mut res);
+        res
     }
 }
 
