@@ -30,23 +30,23 @@ impl Solution {
             res.push(current_list.clone());
             return;
         }
-        for i in start..src.len() {
+        for end in start..src.len() {
             let is_palindrome = {
-                if let State::Validated(cached) = cache[start][i] {
+                if let State::Validated(cached) = cache[start][end] {
                     cached
                 } else {
-                    let res = Self::is_palindrome(src, start, i);
-                    cache[start][i] = State::Validated(res);
+                    let res = Self::is_palindrome(src, start, end);
+                    cache[start][end] = State::Validated(res);
                     res
                 }
             };
             if is_palindrome {
                 let next_current_list = {
                     let mut res = current_list.clone();
-                    res.push(src[start..=i].iter().collect());
+                    res.push(src[start..=end].iter().collect());
                     res
                 };
-                Self::dfs(src, i + 1, &next_current_list, res, cache);
+                Self::dfs(src, end + 1, &next_current_list, res, cache);
             }
         }
     }
