@@ -1,3 +1,10 @@
+#[derive(Clone)]
+pub enum State {
+    NoAsk,
+    Validated(bool),
+}
+
+// time: O()
 pub struct Solution;
 impl Solution {
     fn is_palindrome(src: &[char], mut start: usize, mut end: usize) -> bool {
@@ -12,31 +19,47 @@ impl Solution {
         true
     }
 
-    fn dfs(src: &[char], start: usize, current_list: &Vec<String>, res: &mut Vec<Vec<String>>) {
+    fn dfs(
+        src: &[char],
+        start: usize,
+        current_list: &Vec<String>,
+        res: &mut Vec<Vec<String>>,
+        cache: &mut Vec<Vec<State>>,
+    ) {
         if start > src.len() - 1 {
             res.push(current_list.clone());
             return;
         }
         for i in start..src.len() {
-            let head_is_palindrome = Self::is_palindrome(src, start, i);
-            if head_is_palindrome {
+            let is_palindrome = {
+                if let State::Validated(cached) = cache[start][i] {
+                    cached
+                } else {
+                    let res = Self::is_palindrome(src, start, i);
+                    cache[start][i] = State::Validated(res);
+                    res
+                }
+            };
+            if is_palindrome {
                 let next_current_list = {
                     let mut res = current_list.clone();
                     res.push(src[start..=i].iter().collect());
                     res
                 };
-                Self::dfs(src, i + 1, &next_current_list, res);
+                Self::dfs(src, i + 1, &next_current_list, res, cache);
             }
         }
     }
 
     pub fn partition(s: String) -> Vec<Vec<String>> {
         let chars = s.chars().collect::<Vec<_>>();
-        if chars.len() == 0 {
+        let n = chars.len();
+        if n == 0 {
             return vec![];
         }
         let mut res = vec![];
-        Self::dfs(&chars, 0, &vec![], &mut res);
+        let mut cache = vec![vec![State::NoAsk; n]; n]; // cache is_palindrome records
+        Self::dfs(&chars, 0, &vec![], &mut res, &mut cache);
         res
     }
 }
