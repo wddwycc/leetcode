@@ -19,7 +19,7 @@ impl Solution {
 
     /// Backtracking dfs
     ///
-    /// Constraint: consumed.0 must greater than consumed.1
+    /// Constraint: consumed_l must greater than consumed_r
     fn dfs(
         prev: Vec<char>,
         consumed_l: usize,
