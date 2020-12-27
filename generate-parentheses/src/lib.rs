@@ -19,32 +19,35 @@ impl Solution {
 
     /// Backtracking
     ///
+    /// # Constraint:
+    /// consumed.0 must greater than consumed.1
+    ///
     /// # Arguements
     ///
-    /// * to_consume: `(`'s count, `)`'s count
-    fn dfs(prev: Vec<char>, to_consume: (usize, usize), res: &mut Vec<String>) {
-        if to_consume.0 == 0 && to_consume.1 == 0 {
+    /// * consumed: `(`'s count, `)`'s count
+    fn dfs(prev: Vec<char>, consumed: (usize, usize), max: usize, res: &mut Vec<String>) {
+        if consumed.0 == max && consumed.1 == max {
             if Self::is_well_formed(&prev) {
                 res.push(prev.into_iter().collect())
             }
             return;
         }
-        if to_consume.0 > 0 {
+        if consumed.0 < max {
             let mut next = prev.clone();
             next.push('(');
-            Self::dfs(next, (to_consume.0 - 1, to_consume.1), res);
+            Self::dfs(next, (consumed.0 + 1, consumed.1), max, res);
         }
-        if to_consume.1 > 0 {
+        if consumed.1 < max && consumed.1 < consumed.0 {
             let mut next = prev.clone();
             next.push(')');
-            Self::dfs(next, (to_consume.0, to_consume.1 - 1), res);
+            Self::dfs(next, (consumed.0, consumed.1 + 1), max, res);
         }
     }
 
     pub fn generate_parenthesis(n: i32) -> Vec<String> {
         let n = n as usize;
         let mut res = vec![];
-        Self::dfs(vec![], (n, n), &mut res);
+        Self::dfs(vec![], (0, 0), n, &mut res);
         res
     }
 }
