@@ -17,14 +17,11 @@ impl Solution {
         stack.is_empty()
     }
 
-    /// Backtracking
+    /// Backtracking dfs
     ///
-    /// # Constraint:
-    /// consumed.0 must greater than consumed.1
+    /// * consumed: consumed `(` count & consumed `)` count
     ///
-    /// # Arguements
-    ///
-    /// * consumed: `(`'s count, `)`'s count
+    /// Constraint: consumed.0 must greater than consumed.1
     fn dfs(prev: Vec<char>, consumed: (usize, usize), max: usize, res: &mut Vec<String>) {
         if consumed.0 == max && consumed.1 == max {
             if Self::is_well_formed(&prev) {
