@@ -30,8 +30,7 @@ pub struct Solution {}
 // MARK: Iteratively: Time: O(n), Space: O(1)
 
 impl Solution {
-    pub fn reverse_list(head: Option<Box<ListNode>>) -> Option<Box<ListNode>> {
-        let mut head = head;
+    pub fn reverse_list(mut head: Option<Box<ListNode>>) -> Option<Box<ListNode>> {
         let mut res = None;
         while let Some(mut node) = head {
             head = std::mem::replace(&mut node.next, res);
