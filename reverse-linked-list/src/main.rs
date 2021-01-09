@@ -30,6 +30,13 @@ pub struct Solution {}
 // MARK: Iteratively: Time: O(n), Space: O(1)
 
 impl Solution {
+    /// Given res = None, head = a -> b -> c ...
+    ///
+    /// For every iteration
+    /// res = head.val -> res
+    /// head = head.next
+    ///
+    /// Iteration ends when head is None (reaches end of the source linked list)
     pub fn reverse_list(mut head: Option<Box<ListNode>>) -> Option<Box<ListNode>> {
         let mut res = None;
         while let Some(mut node) = head {
