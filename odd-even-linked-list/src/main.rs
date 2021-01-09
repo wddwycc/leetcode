@@ -12,26 +12,26 @@ impl ListNode {
 }
 
 pub fn odd_even_list(mut head: Option<Box<ListNode>>) -> Option<Box<ListNode>> {
-    let mut head1 = Some(Box::new(ListNode::new(-1)));
-    let mut head2 = Some(Box::new(ListNode::new(-1)));
-    let mut temp1 = &mut head1;
-    let mut temp2 = &mut head2;
+    let mut odd_dummy_head = ListNode::new(-1);
+    let mut even_dummy_head = ListNode::new(-1);
+    let mut odd_cur = &mut odd_dummy_head;
+    let mut even_cur = &mut even_dummy_head;
 
-    let mut i = 1;
-    while let Some(x) = head {
-        if i % 2 == 1 {
-            temp1.as_mut().unwrap().next = Some(x);
-            temp1 = &mut temp1.as_mut().unwrap().next;
-            head = temp1.as_mut().unwrap().next.take();
+    let mut is_even = false;
+    while let Some(mut node) = head {
+        head = std::mem::replace(&mut node.next, None);
+        if is_even {
+            even_cur.next = Some(node);
+            even_cur = even_cur.next.as_mut().unwrap();
         } else {
-            temp2.as_mut().unwrap().next = Some(x);
-            temp2 = &mut temp2.as_mut().unwrap().next;
-            head = temp2.as_mut().unwrap().next.take();
+            odd_cur.next = Some(node);
+            odd_cur = odd_cur.next.as_mut().unwrap();
         }
-        i += 1;
+        is_even = !is_even;
     }
-    temp1.as_mut().unwrap().next = head2.unwrap().next;
-    head1.unwrap().next
+
+    odd_cur.next = even_dummy_head.next;
+    odd_dummy_head.next
 }
 
 fn main() {
