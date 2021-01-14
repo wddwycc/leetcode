@@ -1,27 +1,40 @@
 pub struct Solution;
 impl Solution {
     pub fn min_operations(nums: Vec<i32>, x: i32) -> i32 {
-        let mut res = None;
-        Self::dfs(&nums, x, 0, &mut res);
-        res.map(|a| a as i32).unwrap_or(-1)
-    }
+        let len = nums.len();
+        let prefix_sum = {
+            let mut res = vec![];
+            let mut sum = 0;
+            for a in nums.iter() {
+                sum += a;
+                res.push(sum);
+            }
+            res
+        };
+        // NOTE: transform the question into: find minimum subarray to sum up to target
+        let target = prefix_sum[len - 1] - x;
+        if target == 0 {
+            return len as i32;
+        }
 
-    fn dfs(nums: &[i32], target: i32, steps: usize, min: &mut Option<usize>) {
-        if target < 0 {
-            return;
-        } else if target == 0 {
-            *min = Some(min.map(|a| std::cmp::min(steps, a)).unwrap_or(steps));
-        } else {
-            let len = nums.len();
-            if len == 0 {
-                return;
-            } else if len == 1 {
-                return Self::dfs(&nums[1..], target - nums[0], steps + 1, min);
-            } else {
-                Self::dfs(&nums[1..], target - nums[0], steps + 1, min);
-                Self::dfs(&nums[0..(len - 1)], target - nums[len - 1], steps + 1, min);
+        let mut res = None;
+        for i in 0..len {
+            for j in i..len {
+                let v = {
+                    if i == 0 {
+                        prefix_sum[j]
+                    } else {
+                        prefix_sum[j] - prefix_sum[i - 1]
+                    }
+                };
+                if v != target {
+                    continue;
+                }
+                let distance = j + 1 - i;
+                res = Some(res.map(|a| std::cmp::max(distance, a)).unwrap_or(distance));
             }
         }
+        res.map(|a| (len - a) as i32).unwrap_or(-1)
     }
 }
 
