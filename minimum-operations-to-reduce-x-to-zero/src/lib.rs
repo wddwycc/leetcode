@@ -2,39 +2,27 @@ pub struct Solution;
 impl Solution {
     pub fn min_operations(nums: Vec<i32>, x: i32) -> i32 {
         let len = nums.len();
-        let prefix_sum = {
-            let mut res = vec![];
-            let mut sum = 0;
-            for a in nums.iter() {
-                sum += a;
-                res.push(sum);
+        let total: i32 = nums.iter().sum();
+        let target = total - x;
+        // NOTE: transform the question into: find longest subarray to sum up to target
+        let mut res: i32 = -1;
+        let mut current_v = 0;
+        let mut left = 0;
+        for right in 0..len {
+            current_v += nums[right];
+            while current_v > target && left <= right {
+                current_v -= nums[left];
+                left += 1;
             }
-            res
-        };
-        // NOTE: transform the question into: find minimum subarray to sum up to target
-        let target = prefix_sum[len - 1] - x;
-        if target == 0 {
-            return len as i32;
-        }
-
-        let mut res = None;
-        for i in 0..len {
-            for j in i..len {
-                let v = {
-                    if i == 0 {
-                        prefix_sum[j]
-                    } else {
-                        prefix_sum[j] - prefix_sum[i - 1]
-                    }
-                };
-                if v != target {
-                    continue;
-                }
-                let distance = j + 1 - i;
-                res = Some(res.map(|a| std::cmp::max(distance, a)).unwrap_or(distance));
+            if current_v == target {
+                res = std::cmp::max(res, (right - left + 1) as i32);
             }
         }
-        res.map(|a| (len - a) as i32).unwrap_or(-1)
+        if res == -1 {
+            return -1;
+        } else {
+            return len as i32 - res;
+        }
     }
 }
 
