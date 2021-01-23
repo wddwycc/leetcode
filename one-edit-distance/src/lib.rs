@@ -40,7 +40,6 @@ impl Solution {
                 deleted = true;
             }
         }
-        return deleted;
     }
 
     /// check if str1 replace one char results into str2
