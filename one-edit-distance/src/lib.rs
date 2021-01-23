@@ -29,19 +29,15 @@ impl Solution {
                     return i == len1 - 1;
                 }
             }
-            if i < len1 {
-                if s[i] == t[j] {
-                    i += 1;
-                    j += 1;
-                } else {
-                    if deleted {
-                        return false;
-                    }
-                    i += 1;
-                    deleted = true;
-                }
+            if s[i] == t[j] {
+                i += 1;
+                j += 1;
             } else {
-                break;
+                if deleted {
+                    return false;
+                }
+                i += 1;
+                deleted = true;
             }
         }
         return deleted;
