@@ -9,6 +9,7 @@ struct Node {
     next: Option<Rc<RefCell<Node>>>,
 }
 
+#[derive(Default)]
 struct LinkedList {
     head: Option<Rc<RefCell<Node>>>,
     tail: Option<Rc<RefCell<Node>>>,
@@ -16,10 +17,7 @@ struct LinkedList {
 
 impl LinkedList {
     fn new() -> LinkedList {
-        LinkedList {
-            head: None,
-            tail: None,
-        }
+        Default::default()
     }
 
     fn move_to_head(&mut self, node: &Rc<RefCell<Node>>) {
@@ -94,17 +92,13 @@ struct LRUCache {
     capacity: i32,
 }
 
-/**
- * `&self` means the method takes an immutable reference.
- * If you need a mutable reference, change it to `&mut self` instead.
- */
 impl LRUCache {
     fn new(capacity: i32) -> Self {
         Self {
             map: HashMap::new(),
             list: LinkedList::new(),
             size: 0,
-            capacity: capacity,
+            capacity,
         }
     }
 
@@ -132,8 +126,8 @@ impl LRUCache {
             let node = Rc::new(RefCell::new(Node {
                 prev: None,
                 next: None,
-                key: key,
-                value: value,
+                key,
+                value,
             }));
             self.list.push_front(&node);
             // update hashmap
