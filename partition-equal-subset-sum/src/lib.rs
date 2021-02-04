@@ -17,27 +17,27 @@ impl Solution {
         // for i == 0, f(0, v) = nums[0] == v (bottom case)
         // for i > 0,  f(i, v) = f(i - 1, v - nums[i]) || f(i - 1, v)
         // so we can have our 2d dp
-        let mut dp = vec![vec![false; target as usize]; nums.len()];
+        let mut dp = vec![false; target as usize];
         for i in 0..nums.len() {
             if i == 0 {
                 for v in 1..=target {
-                    dp[0][v as usize - 1] = nums[0] == v;
+                    dp[v as usize - 1] = nums[0] == v;
                 }
             } else {
-                for v in 1..=target {
-                    dp[i][v as usize - 1] = {
+                for v in (1..=target).rev() {
+                    dp[v as usize - 1] = {
                         let minus = v - nums[i];
                         if minus < 0 {
-                            dp[i - 1][v as usize - 1]
+                            dp[v as usize - 1]
                         } else if minus == 0 {
                             true
                         } else {
-                            dp[i - 1][v as usize - 1] || dp[i - 1][minus as usize - 1]
+                            dp[v as usize - 1] || dp[minus as usize - 1]
                         }
                     }
                 }
             }
-            if dp[i][target as usize - 1] {
+            if dp[target as usize - 1] {
                 return true;
             }
         }
