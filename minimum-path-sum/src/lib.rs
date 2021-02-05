@@ -14,23 +14,23 @@ impl Solution {
 
         // let's try bottom-up dp
         // res[i][j] represents f(i, j)
-        let mut res = vec![vec![0; n]; m];
+        let mut res = vec![0; n];
         for i in (0..m).rev() {
             for j in (0..n).rev() {
-                res[i][j] = grid[i][j] + {
+                res[j] = grid[i][j] + {
                     if i + 1 == m && j + 1 == n {
                         0
                     } else if i + 1 == m {
-                        res[i][j + 1]
+                        res[j + 1]
                     } else if j + 1 == n {
-                        res[i + 1][j]
+                        res[j]
                     } else {
-                        std::cmp::min(res[i + 1][j], res[i][j + 1])
+                        std::cmp::min(res[j], res[j + 1])
                     }
                 }
             }
         }
-        res[0][0]
+        res[0]
     }
 }
 
