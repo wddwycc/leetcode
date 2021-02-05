@@ -1,9 +1,8 @@
-use std::collections::HashMap;
-
+pub struct Solution;
 impl Solution {
     pub fn min_path_sum(grid: Vec<Vec<i32>>) -> i32 {
-        let m = grid.len() - 1;
-        let n = grid[0].len() - 1;
+        let m = grid.len();
+        let n = grid[0].len();
 
         // brute-force search, time complexity would be O(2 ** (m+n)), time exceed
 
@@ -13,42 +12,25 @@ impl Solution {
         // if          j < n, f(i, j) = grid[i][j] + f(i, j + 1)
         // else             , f(i, j) = grid[i][j]  // bottom-case
 
-        // let's try top-down dp
-        // HashMap<(i, j), i32>, memorizes result of f(i, j)
-
-        let mut cache = HashMap::new();
-        Self::dfs(&grid, (m, n), (0, 0), &mut cache)
-    }
-
-    fn dfs(
-        grid: &[Vec<i32>],
-        bounds: (usize, usize),
-        cur: (usize, usize),
-        cache: &mut HashMap<(usize, usize), i32>,
-    ) -> i32 {
-        if let Some(res) = cache.get(&cur) {
-            return *res;
-        }
-
-        let (i, j) = cur;
-        let (m, n) = bounds;
-        let mut res = {
-            if i < m && j < n {
-                std::cmp::min(
-                    Self::dfs(grid, bounds, (i + 1, j), cache),
-                    Self::dfs(grid, bounds, (i, j + 1), cache),
-                )
-            } else if i < m {
-                Self::dfs(grid, bounds, (i + 1, j), cache)
-            } else if j < n {
-                Self::dfs(grid, bounds, (i, j + 1), cache)
-            } else {
-                0
+        // let's try bottom-up dp
+        // res[i][j] represents f(i, j)
+        let mut res = vec![vec![0; n]; m];
+        for i in (0..m).rev() {
+            for j in (0..n).rev() {
+                res[i][j] = grid[i][j] + {
+                    if i + 1 == m && j + 1 == n {
+                        0
+                    } else if i + 1 == m {
+                        res[i][j + 1]
+                    } else if j + 1 == n {
+                        res[i + 1][j]
+                    } else {
+                        std::cmp::min(res[i + 1][j], res[i][j + 1])
+                    }
+                }
             }
-        };
-        res += grid[i][j];
-        cache.insert(cur, res);
-        res
+        }
+        res[0][0]
     }
 }
 
