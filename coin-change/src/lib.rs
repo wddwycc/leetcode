@@ -8,7 +8,7 @@ impl Solution {
         // let's try top-down DP
         // memoization: HashMap<s, k>
         let mut cache = HashMap::new();
-        Self::dfs(&coins, amount, 0, &mut cache)
+        Self::dfs(&coins, amount, &mut cache)
             .map(|a| a as i32)
             .unwrap_or(-1)
     }
@@ -16,7 +16,6 @@ impl Solution {
     fn dfs(
         coins: &[i32],
         target: i32,
-        acc: usize,
         cache: &mut HashMap<i32, Result<usize, ()>>,
     ) -> Result<usize, ()> {
         if let Some(cached) = cache.get(&target) {
@@ -24,16 +23,16 @@ impl Solution {
         }
 
         if target == 0 {
-            return Ok(acc);
+            return Ok(0);
         }
         if target < 0 {
             return Err(());
         }
         let res = coins
             .iter()
-            .filter_map(|c| Self::dfs(coins, target - c, 1, cache).ok())
+            .filter_map(|c| Self::dfs(coins, target - c, cache).ok())
             .min()
-            .map(|a| a + acc)
+            .map(|a| a + 1)
             .ok_or(());
         cache.insert(target, res);
         res
