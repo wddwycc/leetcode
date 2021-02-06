@@ -9,10 +9,9 @@ impl Solution {
         let dict = HashSet::from_iter(word_dict);
 
         // given function f(i, j) -> bool, represents s[i..=j] is breakable by dict words
-        // if f(i, j) = true, there must be a k (k >= i, k < j), satisfies:
+        // if f(i, j) = true, there must be a k (k >= i, k <= j), satisfies:
         //   1. f(i, k) in dict
-        //   2. f(k + 1, j) = true
-        // when i == j, f(i, j) = true
+        //   2. when k == j or f(k + 1, j) = true
 
         // let's try top-down dp
         let mut cache = HashMap::new();
@@ -29,22 +28,18 @@ impl Solution {
         if let Some(cached) = cache.get(&(i, j)) {
             return *cached;
         }
-
-        if i > j {
-            return true;
-        }
-        let res = {
-            let mut res = false;
+        let res = (|| {
             let mut word = "".to_owned();
             for k in i..=j {
                 word.push(s[k]);
-                if dict.contains(&word) && Self::dfs(s, dict, cache, k + 1, j) {
-                    res = true;
-                    break;
+                if dict.contains(&word) {
+                    if k == j || Self::dfs(s, dict, cache, k + 1, j) {
+                        return true;
+                    }
                 }
             }
-            res
-        };
+            return false;
+        })();
         cache.insert((i, j), res);
         res
     }
