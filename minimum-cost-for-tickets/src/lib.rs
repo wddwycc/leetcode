@@ -3,14 +3,14 @@ use std::collections::HashMap;
 pub struct Solution;
 impl Solution {
     pub fn mincost_tickets(days: Vec<i32>, costs: Vec<i32>) -> i32 {
-        // give function: f(days[i]) = v, represents min cost from days[i] to the end.
+        // give function: f(i) = v, represents min cost from days[i] to the end.
         // f(i) = min {
         //    f(i + 1) + costs[0],  if i == n, just return costs[0]
         //    f(k) + costs[1], k is the smallest number satisfies days[k] >= days[i] + 7, if k not exist, just return costs[1]
         //    f(k) + costs[2], k is the smallest number satisfies days[k] >= days[i] + 30, if k not exist, just return costs[2]
         // }
 
-        // let's try top-down dp, do memorization for f(i)
+        // let's try top-down dp, do memoization for f(i)
         let mut cache = HashMap::new();
         Self::dfs(&days, &costs, 0, &mut cache)
     }
