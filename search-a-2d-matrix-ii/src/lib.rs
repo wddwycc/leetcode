@@ -27,6 +27,9 @@ impl Solution {
         if val == target {
             return true;
         }
+        if val > target {
+            return false;
+        }
         if x < m && Self::dfs(matrix, bounds, (x + 1, y), target, visited) {
             return true;
         }
