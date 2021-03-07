@@ -38,7 +38,7 @@ impl Solution {
                 let t = queue.pop_front().unwrap();
                 let children: Vec<Trie> = t.children.into_iter().filter_map(|a| a).collect();
                 if children.len() == 0 {
-                    res += level + 2
+                    res += level + 1;
                 } else {
                     for child in children {
                         queue.push_back(child);
