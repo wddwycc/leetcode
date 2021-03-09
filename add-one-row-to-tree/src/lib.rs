@@ -46,37 +46,19 @@ impl Solution {
         queue.push_back(root.clone());
 
         while queue.len() > 0 {
-            println!("{:?}", queue.len());
             if depth + 1 == d {
                 while let Some(node) = queue.pop_front() {
-                    if node.borrow().left.is_some() {
-                        let mut borrow = node.borrow_mut();
-                        borrow.left = Some(Rc::new(RefCell::new(TreeNode {
-                            val: v,
-                            left: borrow.left.take(),
-                            right: None,
-                        })));
-                    } else {
-                        node.borrow_mut().left = Some(Rc::new(RefCell::new(TreeNode {
-                            val: v,
-                            left: None,
-                            right: None,
-                        })));
-                    }
-                    if node.borrow().right.is_some() {
-                        let mut borrow = node.borrow_mut();
-                        borrow.right = Some(Rc::new(RefCell::new(TreeNode {
-                            val: v,
-                            left: None,
-                            right: borrow.right.take(),
-                        })));
-                    } else {
-                        node.borrow_mut().right = Some(Rc::new(RefCell::new(TreeNode {
-                            val: v,
-                            left: None,
-                            right: None,
-                        })));
-                    }
+                    let mut borrow = node.borrow_mut();
+                    borrow.left = Some(Rc::new(RefCell::new(TreeNode {
+                        val: v,
+                        left: borrow.left.take(),
+                        right: None,
+                    })));
+                    borrow.right = Some(Rc::new(RefCell::new(TreeNode {
+                        val: v,
+                        left: None,
+                        right: borrow.right.take(),
+                    })));
                 }
                 break;
             }
