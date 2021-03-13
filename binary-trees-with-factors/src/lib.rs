@@ -2,9 +2,9 @@ use std::collections::HashMap;
 
 pub struct Solution;
 impl Solution {
-    pub fn num_factored_binary_trees(arr: Vec<i32>) -> i32 {
-        let mut arr: Vec<i64> = arr.into_iter().map(|a| a as i64).collect();
+    pub fn num_factored_binary_trees(mut arr: Vec<i32>) -> i32 {
         arr.sort();
+        let arr: Vec<i64> = arr.into_iter().map(|a| a as i64).collect();
 
         let mut products: HashMap<i64, Vec<(i64, i64)>> = HashMap::new();
         let mut dist = HashMap::new();
