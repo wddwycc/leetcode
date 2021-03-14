@@ -1,5 +1,6 @@
 pub struct Solution;
 impl Solution {
+    // time: O(n), space: O(n)
     pub fn find_unsorted_subarray(nums: Vec<i32>) -> i32 {
         if nums.len() < 2 {
             return 0;
@@ -12,11 +13,10 @@ impl Solution {
             while cur < nums.len() {
                 if stack.is_empty() || nums[cur] >= nums[*stack.last().unwrap()] {
                     stack.push(cur);
+                    cur += 1;
                 } else {
                     res = res.min(stack.pop().unwrap());
-                    cur -= 1;
                 }
-                cur += 1;
             }
             res
         };
@@ -28,14 +28,13 @@ impl Solution {
             loop {
                 if stack.is_empty() || nums[cur] <= nums[*stack.last().unwrap()] {
                     stack.push(cur);
+                    if cur == 0 {
+                        break;
+                    }
+                    cur -= 1;
                 } else {
                     res = res.max(stack.pop().unwrap());
-                    cur += 1;
                 }
-                if cur == 0 {
-                    break;
-                }
-                cur -= 1;
             }
             res
         };
