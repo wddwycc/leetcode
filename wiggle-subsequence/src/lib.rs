@@ -9,30 +9,40 @@ enum State {
 pub struct Solution;
 impl Solution {
     pub fn wiggle_max_length(nums: Vec<i32>) -> i32 {
-        Self::helper(State::Pending(nums[0]), &nums[1..], 1)
-    }
+        let mut res = 1;
+        let mut state = State::Pending(nums[0]);
 
-    fn helper(state: State, nums: &[i32], acc: i32) -> i32 {
-        let num = match nums.first() {
-            Some(a) => *a,
-            None => return acc,
-        };
-
-        match state {
-            State::Pending(prev) => match num.cmp(&prev) {
-                Ordering::Equal => Self::helper(State::Pending(prev), &nums[1..], acc),
-                Ordering::Greater => Self::helper(State::NeedDecrease(num), &nums[1..], acc + 1),
-                Ordering::Less => Self::helper(State::NeedIncrease(num), &nums[1..], acc + 1),
-            },
-            State::NeedIncrease(min) => match num.cmp(&min) {
-                Ordering::Greater => Self::helper(State::NeedDecrease(num), &nums[1..], acc + 1),
-                _ => Self::helper(State::NeedIncrease(num), &nums[1..], acc),
-            },
-            State::NeedDecrease(max) => match num.cmp(&max) {
-                Ordering::Less => Self::helper(State::NeedIncrease(num), &nums[1..], acc + 1),
-                _ => return Self::helper(State::NeedDecrease(num), &nums[1..], acc),
-            },
+        for i in 1..nums.len() {
+            let num = nums[i];
+            state = match state {
+                State::Pending(prev) => match num.cmp(&prev) {
+                    Ordering::Equal => State::Pending(prev),
+                    Ordering::Greater => {
+                        res += 1;
+                        State::NeedDecrease(num)
+                    }
+                    Ordering::Less => {
+                        res += 1;
+                        State::NeedIncrease(num)
+                    }
+                },
+                State::NeedIncrease(min) => match num.cmp(&min) {
+                    Ordering::Greater => {
+                        res += 1;
+                        State::NeedDecrease(num)
+                    }
+                    _ => State::NeedIncrease(num),
+                },
+                State::NeedDecrease(max) => match num.cmp(&max) {
+                    Ordering::Less => {
+                        res += 1;
+                        State::NeedIncrease(num)
+                    }
+                    _ => State::NeedDecrease(num),
+                },
+            }
         }
+        res
     }
 }
 
