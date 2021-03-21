@@ -13,27 +13,22 @@ impl Solution {
             .unwrap_or(-1)
     }
 
-    fn dfs(
-        coins: &[i32],
-        target: i32,
-        cache: &mut HashMap<i32, Result<usize, ()>>,
-    ) -> Result<usize, ()> {
+    fn dfs(coins: &[i32], target: i32, cache: &mut HashMap<i32, Option<usize>>) -> Option<usize> {
         if let Some(cached) = cache.get(&target) {
             return *cached;
         }
 
         if target == 0 {
-            return Ok(0);
+            return Some(0);
         }
         if target < 0 {
-            return Err(());
+            return None;
         }
         let res = coins
             .iter()
-            .filter_map(|c| Self::dfs(coins, target - c, cache).ok())
+            .filter_map(|c| Self::dfs(coins, target - c, cache))
             .min()
-            .map(|a| a + 1)
-            .ok_or(());
+            .map(|a| a + 1);
         cache.insert(target, res);
         res
     }
