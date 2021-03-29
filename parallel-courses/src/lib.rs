@@ -36,9 +36,11 @@ impl Solution {
             {
                 learned = true;
                 course_prerequests.remove(&to_learn);
-                if let Some(courses_to_unlock) = course_targets.get(&to_learn) {
-                    for &course_to_unlock in courses_to_unlock {
-                        if let Some(pre_courses) = course_prerequests.get_mut(&course_to_unlock) {
+                if let Some(courses_to_rm_prerequests) = course_targets.get(&to_learn) {
+                    for &course_to_rm_prerequests in courses_to_rm_prerequests {
+                        if let Some(pre_courses) =
+                            course_prerequests.get_mut(&course_to_rm_prerequests)
+                        {
                             pre_courses.remove(&to_learn);
                         }
                     }
