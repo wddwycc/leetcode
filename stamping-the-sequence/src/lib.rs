@@ -22,7 +22,7 @@ impl Solution {
                 }
             }
             if !done_replace {
-                return vec![0];
+                return vec![];
             }
         }
         res.reverse();
@@ -31,7 +31,7 @@ impl Solution {
 
     fn can_replace(target: &[u8], stamp: &[u8], cur: usize) -> bool {
         for i in 0..stamp.len() {
-            if target[cur + i] != ('*' as u8) && target[cur + i] != stamp[i] {
+            if target[cur + i] != (b'*') && target[cur + i] != stamp[i] {
                 return false;
             }
         }
@@ -41,8 +41,8 @@ impl Solution {
     fn do_replace(target: &mut [u8], s_len: usize, cur: usize) -> usize {
         let mut res = 0;
         for i in 0..s_len {
-            if target[cur + i] != '*' as u8 {
-                target[cur + i] = '*' as u8;
+            if target[cur + i] != b'*' {
+                target[cur + i] = b'*';
                 res += 1;
             }
         }
