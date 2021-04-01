@@ -6,28 +6,21 @@ impl Solution {
             a => a,
         });
         let heights: Vec<i32> = envelopes.into_iter().map(|a| a[1]).collect();
-        Self::longest_increasing_subsequence(&heights) as i32
+        Self::length_of_lis(heights) as i32
     }
 
-    fn longest_increasing_subsequence(nums: &[i32]) -> usize {
-        if nums.len() <= 1 {
-            return nums.len();
-        }
-        let mut res = vec![];
-        res.push(nums[0]);
-        for i in 1..nums.len() {
-            match res.binary_search(&nums[i]) {
-                Err(n) => {
-                    if n >= res.len() {
-                        res.push(nums[i]);
-                    } else {
-                        res[n] = nums[i];
-                    }
+    pub fn length_of_lis(nums: Vec<i32>) -> i32 {
+        let mut piles: Vec<i32> = vec![];
+        for num in nums {
+            if let Err(i) = piles.binary_search(&num) {
+                if i < piles.len() {
+                    piles[i] = num;
+                } else {
+                    piles.push(num);
                 }
-                _ => (),
             }
         }
-        res.len()
+        piles.len() as i32
     }
 }
 
