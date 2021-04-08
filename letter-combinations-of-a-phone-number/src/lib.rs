@@ -1,38 +1,36 @@
 pub struct Solution;
 impl Solution {
     pub fn letter_combinations(digits: String) -> Vec<String> {
-        let mut res = vec![];
-        for digit in digits.chars() {
-            let chars = match digit {
-                '2' => vec!['a', 'b', 'c'],
-                '3' => vec!['d', 'e', 'f'],
-                '4' => vec!['g', 'h', 'i'],
-                '5' => vec!['j', 'k', 'l'],
-                '6' => vec!['m', 'n', 'o'],
-                '7' => vec!['p', 'q', 'r', 's'],
-                '8' => vec!['t', 'u', 'v'],
-                '9' => vec!['w', 'x', 'y', 'z'],
-                _ => continue,
-            };
-            if res.len() == 0 {
-                res = chars.into_iter().map(|a| a.to_string()).collect();
-            } else {
-                res = res
-                    .iter()
-                    .flat_map(|a| {
-                        chars
-                            .iter()
-                            .map(|b| {
-                                let mut res = a.clone();
-                                res.push(b.clone());
-                                res
-                            })
-                            .collect::<Vec<_>>()
-                    })
-                    .collect()
-            }
+        if digits.len() == 0 {
+            return vec![];
         }
+        let digits = digits.as_bytes();
+        let mut res = vec![];
+        Self::dfs(digits, 0, &mut vec![], &mut res);
         res
+    }
+
+    fn dfs(digits: &[u8], cur: usize, acc: &mut Vec<u8>, res: &mut Vec<String>) {
+        if cur == digits.len() {
+            res.push(String::from_utf8(acc.clone()).unwrap());
+            return;
+        }
+        let letters = match digits[cur] {
+            b'2' => [b'a', b'b', b'c'].iter(),
+            b'3' => [b'd', b'e', b'f'].iter(),
+            b'4' => [b'g', b'h', b'i'].iter(),
+            b'5' => [b'j', b'k', b'l'].iter(),
+            b'6' => [b'm', b'n', b'o'].iter(),
+            b'7' => [b'p', b'q', b'r', b's'].iter(),
+            b'8' => [b't', b'u', b'v'].iter(),
+            b'9' => [b'w', b'x', b'y', b'z'].iter(),
+            _ => panic!(),
+        };
+        for &letter in letters {
+            acc.push(letter);
+            Self::dfs(digits, cur + 1, acc, res);
+            acc.pop();
+        }
     }
 }
 
