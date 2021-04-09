@@ -1,8 +1,8 @@
 pub struct Solution;
 impl Solution {
     pub fn add_strings(num1: String, num2: String) -> String {
-        let num1 = num1.as_bytes();
-        let num2 = num2.as_bytes();
+        let num1 = num1.into_bytes();
+        let num2 = num2.into_bytes();
         let m = num1.len();
         let n = num2.len();
 
