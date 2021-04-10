@@ -8,32 +8,41 @@ impl Solution {
             .map(|((s, e), p)| (s, e, p))
             .collect();
         slots.sort_by(|x, y| x.0.cmp(&y.0));
-        Self::dfs(&slots)
+        // NOTE: Cache best profit start from index
+        let mut cache: Vec<Option<i32>> = vec![None; slots.len()];
+        Self::dfs(&slots, 0, &mut cache)
     }
 
-    fn dfs(slots: &[(i32, i32, i32)]) -> i32 {
-        if slots.len() == 0 {
+    fn dfs(slots: &[(i32, i32, i32)], cur: usize, cache: &mut Vec<Option<i32>>) -> i32 {
+        if cur >= slots.len() {
             return 0;
         }
+
+        if let Some(cached) = cache[cur] {
+            return cached;
+        }
+
         // for every time slot, one can choose do or not.
         // if do the job, get the profit, to the next start_time, dfs again
         // else, dfs next time slot directly
 
         // NOTE: consume first el
         let res1 = {
-            let mut res = slots[0].2;
-            for i in 1..slots.len() {
-                if slots[i].0 >= slots[0].1 {
-                    res += Self::dfs(&slots[i..]);
+            let mut res = slots[cur].2;
+            for i in (cur + 1)..slots.len() {
+                if slots[i].0 >= slots[cur].1 {
+                    res += Self::dfs(slots, i, cache);
                     break;
                 }
             }
             res
         };
         // NOTE: skip first el
-        let res2 = Self::dfs(&slots[1..]);
+        let res2 = Self::dfs(slots, cur + 1, cache);
 
-        std::cmp::max(res1, res2)
+        let res = std::cmp::max(res1, res2);
+        cache[cur] = Some(res);
+        res
     }
 }
 
