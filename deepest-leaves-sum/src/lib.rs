@@ -31,7 +31,6 @@ impl Solution {
 
         let mut queue = VecDeque::new();
         queue.push_back(root);
-
         while queue.len() > 0 {
             let mut sum = 0;
             for _ in 0..queue.len() {
