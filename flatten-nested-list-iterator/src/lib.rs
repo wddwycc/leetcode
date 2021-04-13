@@ -18,9 +18,8 @@ impl NestedIterator {
         if let Some(nested_i) = self.stack.pop() {
             match nested_i {
                 NestedInteger::Int(a) => return Some(a),
-                NestedInteger::List(mut list) => {
-                    list.reverse();
-                    for a in list {
+                NestedInteger::List(list) => {
+                    for a in list.into_iter().rev() {
                         self.stack.push(a);
                     }
                     return self.consume();
