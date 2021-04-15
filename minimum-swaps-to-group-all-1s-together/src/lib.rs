@@ -9,10 +9,11 @@ impl Solution {
         }
 
         let mut first_is_zero = data[0] == 0;
-        let mut dp = vec![(0..k).filter(|&i| data[i] == 0).count() as i32];
+        let mut prev = (0..k).filter(|&i| data[i] == 0).count() as i32;
+        let mut min = prev;
 
         for i in 1..=(n - k) {
-            let mut next_v = dp[i - 1];
+            let mut next_v = prev;
             if first_is_zero {
                 next_v -= 1;
             }
@@ -20,8 +21,9 @@ impl Solution {
                 next_v += 1;
             }
             first_is_zero = data[i] == 0;
-            dp.push(next_v);
+            prev = next_v;
+            min = min.min(next_v);
         }
-        dp.into_iter().min().unwrap()
+        min
     }
 }
