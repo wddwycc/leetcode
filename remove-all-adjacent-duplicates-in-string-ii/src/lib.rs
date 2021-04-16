@@ -3,19 +3,18 @@ impl Solution {
     pub fn remove_duplicates(s: String, k: i32) -> String {
         let mut stack: Vec<(char, usize)> = vec![];
         for c in s.chars() {
-            if let Some(top) = stack.last_mut() {
-                if top.0 == c {
-                    if top.1 == (k as usize) - 1 {
-                        stack.pop();
-                        continue;
-                    } else {
-                        top.1 += 1;
-                    }
-                } else {
+            let same_c_top = match stack.last_mut() {
+                Some(a) if a.0 == c => a,
+                Some(_) | None => {
                     stack.push((c, 1));
+                    continue;
                 }
+            };
+            if same_c_top.1 == (k as usize) - 1 {
+                stack.pop();
+                continue;
             } else {
-                stack.push((c, 1));
+                same_c_top.1 += 1;
             }
         }
         stack.into_iter().flat_map(|a| vec![a.0; a.1]).collect()
