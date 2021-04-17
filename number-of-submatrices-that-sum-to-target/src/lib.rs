@@ -20,9 +20,8 @@ impl Solution {
             for i2 in i1..=m {
                 hashmap.clear();
                 hashmap.insert(0, 1);
-                let mut sum = 0;
                 for j in 1..=n {
-                    sum = ps[i2][j] - ps[i1 - 1][j];
+                    let sum = ps[i2][j] - ps[i1 - 1][j];
                     if let Some(prev_count) = hashmap.get(&(sum - target)) {
                         res += prev_count
                     }
