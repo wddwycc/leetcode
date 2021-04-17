@@ -5,14 +5,13 @@ impl Solution {
         for c in s.chars() {
             let same_c_top = match stack.last_mut() {
                 Some(a) if a.0 == c => a,
-                Some(_) | None => {
+                _ => {
                     stack.push((c, 1));
                     continue;
                 }
             };
             if same_c_top.1 == (k as usize) - 1 {
                 stack.pop();
-                continue;
             } else {
                 same_c_top.1 += 1;
             }
