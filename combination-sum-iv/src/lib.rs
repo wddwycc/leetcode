@@ -1,5 +1,3 @@
-use std::collections::HashSet;
-
 pub struct Solution;
 impl Solution {
     pub fn combination_sum4(mut nums: Vec<i32>, target: i32) -> i32 {
