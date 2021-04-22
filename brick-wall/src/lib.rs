@@ -7,14 +7,11 @@ impl Solution {
         let mut map = HashMap::new();
         for row in wall {
             let mut acc = 0;
-            for brick in &row[0..(row.len() - 1)] {
+            for brick in &row[..row.len() - 1] {
                 acc += brick;
                 *map.entry(acc).or_insert(0) += 1;
             }
         }
-        map.values()
-            .max()
-            .map(|a| h as i32 - *a)
-            .unwrap_or(h as i32)
+        h as i32 - map.values().max().map(|a| *a).unwrap_or(0)
     }
 }
