@@ -5,15 +5,14 @@ impl Solution {
         let bytes = s.into_bytes();
         let mut res = 0;
         for cur in 0..(bytes.len() - 1) {
-            if bytes[cur] == bytes[cur + 1] {
+            let l = bytes[cur];
+            let r = bytes[cur + 1];
+            if l == r {
                 continue;
             }
             res += 1;
             let mut i = cur;
             let mut j = cur + 1;
-            let l = bytes[i];
-            let r = bytes[j];
-            // two cursor extend two sides
             while i > 0 && j + 1 < bytes.len() {
                 i -= 1;
                 j += 1;
