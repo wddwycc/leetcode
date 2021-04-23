@@ -1,47 +1,26 @@
-enum State {
-    NoAsk,
-    Zero,
-    One,
-    ZeroAfterOne,
-    OneAfterZero,
-}
-
 pub struct Solution;
 impl Solution {
     pub fn count_binary_substrings(s: String) -> i32 {
+        // find all 01 and 10, extend left and right
         let bytes = s.into_bytes();
-
         let mut res = 0;
-        for i in 0..bytes.len() {
-            let mut state = State::NoAsk;
-            let mut zeros = 0;
-            let mut ones = 0;
-            for j in i..bytes.len() {
-                if bytes[j] == b'0' {
-                    match state {
-                        State::NoAsk => state = State::Zero,
-                        State::One => state = State::ZeroAfterOne,
-                        State::Zero | State::ZeroAfterOne => (),
-                        State::OneAfterZero => break,
-                    }
-                    zeros += 1;
-                }
-                if bytes[j] == b'1' {
-                    match state {
-                        State::NoAsk => state = State::One,
-                        State::Zero => state = State::OneAfterZero,
-                        State::One | State::OneAfterZero => (),
-                        State::ZeroAfterOne => break,
-                    }
-                    ones += 1;
-                }
-                match state {
-                    State::ZeroAfterOne | State::OneAfterZero => {
-                        if zeros == ones {
-                            res += 1;
-                        }
-                    }
-                    _ => (),
+        for cur in 0..(bytes.len() - 1) {
+            if bytes[cur] == bytes[cur + 1] {
+                continue;
+            }
+            res += 1;
+            let mut i = cur;
+            let mut j = cur + 1;
+            let l = bytes[i];
+            let r = bytes[j];
+            // two cursor extend two sides
+            while i > 0 && j + 1 < bytes.len() {
+                i -= 1;
+                j += 1;
+                if bytes[i] == l && bytes[j] == r {
+                    res += 1;
+                } else {
+                    break;
                 }
             }
         }
