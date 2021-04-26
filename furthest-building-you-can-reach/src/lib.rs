@@ -3,11 +3,6 @@ use std::collections::BinaryHeap;
 pub struct Solution;
 impl Solution {
     pub fn furthest_building(heights: Vec<i32>, mut bricks: i32, mut ladders: i32) -> i32 {
-        // greedy:
-        // use bricks for each move
-        // replace most wasted brick usage to ladder
-        // loop.
-        // until running outof ladders and bricks.
         let mut bricks_pq: BinaryHeap<(i32, usize)> = BinaryHeap::new();
         let mut ladders_pq: BinaryHeap<(i32, usize)> = BinaryHeap::new();
         let mut cur = 0;
