@@ -44,24 +44,24 @@ impl Solution {
             return 1;
         }
         route.insert(cur);
-        let mut try_seek = |(a, b): (usize, usize)| {
-            if grid[i][j] == -1 || route.contains(&(a, b)) {
+        let mut try_dfs = |pos: (usize, usize)| {
+            if grid[i][j] == -1 || route.contains(&pos) {
                 return 0;
             };
-            return Self::dfs(grid, bounds, (a, b), target, route);
+            return Self::dfs(grid, bounds, pos, target, route);
         };
         let mut res = 0;
         if i > 0 {
-            res += try_seek((i - 1, j));
+            res += try_dfs((i - 1, j));
         }
         if i < m {
-            res += try_seek((i + 1, j));
+            res += try_dfs((i + 1, j));
         }
         if j > 0 {
-            res += try_seek((i, j - 1));
+            res += try_dfs((i, j - 1));
         }
         if j < n {
-            res += try_seek((i, j + 1));
+            res += try_dfs((i, j + 1));
         }
         route.remove(&cur);
         res
