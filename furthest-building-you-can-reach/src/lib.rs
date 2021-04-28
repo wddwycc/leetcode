@@ -11,7 +11,7 @@ impl Solution {
             }
             pq.push(Reverse(offset));
             if pq.len() > ladders as usize {
-                let to_replace = pq.pop().unwrap().0;
+                let Reverse(to_replace) = pq.pop().unwrap();
                 if to_replace <= bricks {
                     bricks -= to_replace;
                 } else {
