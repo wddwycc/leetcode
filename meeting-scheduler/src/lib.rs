@@ -5,7 +5,7 @@ impl Solution {
         slots2: Vec<Vec<i32>>,
         duration: i32,
     ) -> Vec<i32> {
-        slots1.sort_by_key(|a| a[0]);
+        slots1.sort();
         for i in 0..slots1.len() {
             for j in 0..slots2.len() {
                 let s1 = &slots1[i];
