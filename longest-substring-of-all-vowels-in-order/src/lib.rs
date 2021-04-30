@@ -15,9 +15,10 @@ impl Solution {
             res
         };
         let mut res = 0;
+        let mut appeared = HashSet::new();
         for l in a_indice {
             let mut r = l;
-            let mut appeared = HashSet::new();
+            appeared.clear();
             appeared.insert(bytes[r]);
             while r + 1 < bytes.len() {
                 if bytes[r + 1] < bytes[r] {
