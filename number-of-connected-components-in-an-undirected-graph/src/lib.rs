@@ -4,15 +4,14 @@ pub struct Solution;
 impl Solution {
     pub fn count_components(n: i32, edges: Vec<Vec<i32>>) -> i32 {
         let n = n as usize;
-        let adjacency_matrix = {
-            let mut res = vec![vec![false; n]; n];
+        let adjacency_list = {
+            let mut res = vec![vec![]; n];
             for edge in edges {
-                res[edge[0] as usize][edge[1] as usize] = true;
-                res[edge[1] as usize][edge[0] as usize] = true;
+                res[edge[0] as usize].push(edge[1] as usize);
+                res[edge[1] as usize].push(edge[0] as usize);
             }
             res
         };
-        // NOTE: BFS on every node
         let mut res = 0;
         let mut visited = HashSet::new();
         for i in 0..n {
@@ -24,10 +23,7 @@ impl Solution {
             queue.push_back(i);
             while let Some(node) = queue.pop_front() {
                 visited.insert(node);
-                for (idx, &b) in adjacency_matrix[node].iter().enumerate() {
-                    if !b {
-                        continue;
-                    }
+                for &idx in adjacency_list[node].iter() {
                     if visited.contains(&idx) {
                         continue;
                     }
