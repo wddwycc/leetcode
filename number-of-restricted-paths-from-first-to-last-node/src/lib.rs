@@ -32,15 +32,15 @@ impl Solution {
         }
         // Step2: use top-down dp to calc numbers of paths
         let mut cache = HashMap::new();
-        Self::dfs(&adjancency_list, &distances, 1, &mut cache) as i32
+        Self::dfs(&adjancency_list, &distances, 1, &mut cache)
     }
 
     fn dfs(
         adjancency_list: &[Vec<(usize, i32)>],
         distances: &[i32],
         u: usize,
-        cache: &mut HashMap<usize, i64>,
-    ) -> i64 {
+        cache: &mut HashMap<usize, i32>,
+    ) -> i32 {
         if let Some(&cached) = cache.get(&u) {
             return cached;
         }
@@ -51,8 +51,8 @@ impl Solution {
             } else if distances[u] > distances[v] {
                 res += Self::dfs(adjancency_list, distances, v, cache);
             }
+            res %= 1_000_000_007;
         }
-        res %= 1_000_000_007;
         cache.insert(u, res);
         res
     }
