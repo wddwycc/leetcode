@@ -30,7 +30,7 @@ impl Solution {
                 }
             }
         }
-        // Step2: use top-down dp to calc number of paths
+        // Step2: use top-down dp to calc numbers of paths
         let mut cache = HashMap::new();
         Self::dfs(&adjancency_list, &distances, 1, &mut cache) as i32
     }
