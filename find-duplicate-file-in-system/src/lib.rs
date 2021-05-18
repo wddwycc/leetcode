@@ -16,6 +16,9 @@ impl Solution {
                     .push(format!("{}/{}", p1, p2));
             }
         }
-        res.values().filter(|a| a.len() > 1).cloned().collect()
+        res.into_iter()
+            .filter(|(_, v)| v.len() > 1)
+            .map(|(_, v)| v)
+            .collect()
     }
 }
