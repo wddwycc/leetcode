@@ -29,27 +29,16 @@ impl TicTacToe {
         self.board[row as usize][col as usize] = player;
         // check each row, each column and each diagonal
         for &p in [1, 2].iter() {
-            for r in 0..self.n {
-                if self.board[r].iter().all(|&a| a == p) {
-                    return p;
-                }
-            }
-            'outer: for c in 0..self.n {
-                for r in 0..self.n {
-                    if self.board[r][c] == p {
-                        continue;
-                    } else {
-                        continue 'outer;
-                    }
-                }
-                return p;
-            }
-            if (0..self.n).into_iter().all(|i| self.board[i][i] == p) {
-                return p;
-            }
             if (0..self.n)
                 .into_iter()
-                .all(|i| self.board[i][self.n - 1 - i] == p)
+                .all(|c| self.board[row as usize][c] == p)
+                || (0..self.n)
+                    .into_iter()
+                    .all(|r| self.board[r][col as usize] == p)
+                || (0..self.n).into_iter().all(|i| self.board[i][i] == p)
+                || (0..self.n)
+                    .into_iter()
+                    .all(|i| self.board[i][self.n - 1 - i] == p)
             {
                 return p;
             }
