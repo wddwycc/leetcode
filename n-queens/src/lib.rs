@@ -22,12 +22,13 @@ impl Solution {
             }
             return;
         }
-
+        // NOTE: try place on cur
         if Self::is_not_under_attack(&queens, cur) {
             queens.push(cur);
             Self::dfs(n, queens, res, (cur.0 + 1, 0));
             queens.pop();
         }
+        // NOTE: try skip cur
         if cur.1 < n - 1 {
             Self::dfs(n, queens, res, (cur.0, cur.1 + 1));
         } else {
