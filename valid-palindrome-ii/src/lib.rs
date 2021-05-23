@@ -1,41 +1,32 @@
 pub struct Solution;
 impl Solution {
     pub fn valid_palindrome(s: String) -> bool {
-        Self::helper(&s.as_bytes(), true)
-    }
-
-    fn helper(chars: &[u8], can_skip: bool) -> bool {
-        if chars.len() == 0 || chars.len() == 1 {
-            return true;
-        }
-
+        let s = s.into_bytes();
         let mut i = 0;
-        let mut j = chars.len() - 1;
-        while i <= j {
-            if chars[i] == chars[j] {
+        let mut j = s.len() - 1;
+        while i < j {
+            if s[i] == s[j] {
                 i += 1;
                 j -= 1;
-                continue;
+            } else {
+                return Self::is_real_valid_palindrome(&s[(i + 1)..=j])
+                    || Self::is_real_valid_palindrome(&s[i..=(j - 1)]);
             }
-            if !can_skip {
-                return false;
-            }
-            if Self::helper(&chars[(i + 1)..=j], false) {
-                return true;
-            } else if Self::helper(&chars[i..=(j - 1)], false) {
-                return true;
+        }
+        true
+    }
+
+    fn is_real_valid_palindrome(s: &[u8]) -> bool {
+        let mut i = 0;
+        let mut j = s.len() - 1;
+        while i < j {
+            if s[i] == s[j] {
+                i += 1;
+                j -= 1;
             } else {
                 return false;
             }
         }
         true
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn it_works() {
-        assert_eq!(2 + 2, 4);
     }
 }
