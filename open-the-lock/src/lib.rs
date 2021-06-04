@@ -23,25 +23,32 @@ impl Solution {
         while queue.len() > 0 {
             for _ in 0..queue.len() {
                 let pos = queue.pop_front().unwrap();
-                if pos == target {
-                    return steps;
-                }
                 if visited.contains(&pos) {
                     continue;
+                }
+                if pos == target {
+                    return steps;
                 }
                 for offset in 0..4 {
                     let bit_offset = offset * 4;
                     let v = ((15 << bit_offset) & pos) >> bit_offset;
-                    queue.push_back(if v == 9 {
-                        pos - (9 << bit_offset)
-                    } else {
-                        pos + (1 << bit_offset)
-                    });
-                    queue.push_back(if v == 0 {
-                        pos + (9 << bit_offset)
-                    } else {
-                        pos - (1 << bit_offset)
-                    });
+                    for &next_pos in &[
+                        if v == 9 {
+                            pos - (9 << bit_offset)
+                        } else {
+                            pos + (1 << bit_offset)
+                        },
+                        if v == 0 {
+                            pos + (9 << bit_offset)
+                        } else {
+                            pos - (1 << bit_offset)
+                        },
+                    ] {
+                        if next_pos == target {
+                            return steps + 1;
+                        }
+                        queue.push_back(next_pos);
+                    }
                 }
                 visited.insert(pos);
             }
