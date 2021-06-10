@@ -9,8 +9,8 @@ impl MyCalendar {
     }
 
     fn book(&mut self, start: i32, end: i32) -> bool {
-        for &(prev_start, prev_end) in self.ranges.iter() {
-            if prev_start >= end || prev_end <= start {
+        for &range in self.ranges.iter() {
+            if range.0 >= end || range.1 <= start {
                 continue;
             }
             return false;
