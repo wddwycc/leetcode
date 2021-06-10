@@ -1,6 +1,8 @@
+use std::collections::BTreeMap;
+
 #[derive(Default)]
 struct MyCalendar {
-    ranges: Vec<(i32, i32)>,
+    tree: BTreeMap<i32, i32>,
 }
 
 impl MyCalendar {
@@ -9,13 +11,17 @@ impl MyCalendar {
     }
 
     fn book(&mut self, start: i32, end: i32) -> bool {
-        for &range in self.ranges.iter() {
-            if range.0 >= end || range.1 <= start {
-                continue;
+        for (&s, _) in self.tree.range(start..).take(1) {
+            if s < end {
+                return false;
             }
-            return false;
         }
-        self.ranges.push((start, end));
+        for (_, &e) in self.tree.range(..start).rev().take(1) {
+            if e > start {
+                return false;
+            }
+        }
+        self.tree.insert(start, end);
         true
     }
 }
