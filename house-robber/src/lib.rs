@@ -13,14 +13,14 @@ impl Solution {
         //     nums[i] + max { dp[i + 2] + ... dp[n - 1] },
         //     max { dp[i + 1]... dp[n - 1] }
         // }
-        let mut rob_today_max = nums[n - 2];
-        let mut skip_today_max = nums[n - 1];
+        let mut rob_cur_max = nums[n - 2];
+        let mut skip_cur_max = nums[n - 1];
         for i in (0..(n - 2)).rev() {
-            let new_rob_today_max = nums[i] + skip_today_max;
-            let new_skip_today_max = std::cmp::max(rob_today_max, skip_today_max);
-            rob_today_max = new_rob_today_max;
-            skip_today_max = new_skip_today_max;
+            let new_rob_cur_max = nums[i] + skip_cur_max;
+            let new_skip_cur_max = std::cmp::max(rob_cur_max, skip_cur_max);
+            rob_cur_max = new_rob_cur_max;
+            skip_cur_max = new_skip_cur_max;
         }
-        std::cmp::max(rob_today_max, skip_today_max)
+        std::cmp::max(rob_cur_max, skip_cur_max)
     }
 }
