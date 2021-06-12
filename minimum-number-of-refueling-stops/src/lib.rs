@@ -13,17 +13,15 @@ impl Solution {
         let mut station_idx = 0;
         while pos + fuel < target {
             pos += fuel;
-            fuel = 0;
             while station_idx < stations.len() && stations[station_idx][0] <= pos {
                 available_fuels.push(stations[station_idx][1]);
                 station_idx += 1;
             }
-            if let Some(fuel_to_add) = available_fuels.pop() {
-                fuel += fuel_to_add;
-                ans += 1;
-            } else {
-                return -1;
-            }
+            fuel = match available_fuels.pop() {
+                Some(a) => a,
+                None => return -1,
+            };
+            ans += 1;
         }
         ans
     }
