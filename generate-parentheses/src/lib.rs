@@ -1,62 +1,31 @@
 pub struct Solution;
 impl Solution {
-    fn is_well_formed(src: &[char]) -> bool {
-        let mut stack: Vec<&char> = vec![];
-        for i in src {
-            match stack.last() {
-                Some(prev) => {
-                    if *i == ')' && **prev == '(' {
-                        stack.pop();
-                    } else {
-                        stack.push(i);
-                    }
-                }
-                None => stack.push(i),
-            }
-        }
-        stack.is_empty()
+    pub fn generate_parenthesis(mut n: i32) -> Vec<String> {
+        let mut ans = vec![];
+        Self::dfs(&mut "".to_owned(), &mut 0, &mut n, &mut ans);
+        ans
     }
 
-    /// Backtracking dfs
-    ///
-    /// Constraint: consumed_l must greater than consumed_r
-    fn dfs(
-        prev: Vec<char>,
-        consumed_l: usize,
-        consumed_r: usize,
-        max: usize,
-        res: &mut Vec<String>,
-    ) {
-        if consumed_l == max && consumed_r == max {
-            if Self::is_well_formed(&prev) {
-                res.push(prev.into_iter().collect())
-            }
+    fn dfs(str_acc: &mut String, l_acc: &mut i32, l_remaining: &mut i32, ans: &mut Vec<String>) {
+        if *l_acc == 0 && *l_remaining == 0 {
+            ans.push(str_acc.clone());
             return;
         }
-        if consumed_l < max {
-            let mut next = prev.clone();
-            next.push('(');
-            Self::dfs(next, consumed_l + 1, consumed_r, max, res);
+        if *l_remaining > 0 {
+            str_acc.push('(');
+            *l_remaining -= 1;
+            *l_acc += 1;
+            Self::dfs(str_acc, l_acc, l_remaining, ans);
+            str_acc.pop();
+            *l_remaining += 1;
+            *l_acc -= 1;
         }
-        if consumed_r < max && consumed_r < consumed_l {
-            let mut next = prev.clone();
-            next.push(')');
-            Self::dfs(next, consumed_l, consumed_r + 1, max, res);
+        if *l_acc > 0 {
+            str_acc.push(')');
+            *l_acc -= 1;
+            Self::dfs(str_acc, l_acc, l_remaining, ans);
+            str_acc.pop();
+            *l_acc += 1;
         }
-    }
-
-    pub fn generate_parenthesis(n: i32) -> Vec<String> {
-        let n = n as usize;
-        let mut res = vec![];
-        Self::dfs(vec![], 0, 0, n, &mut res);
-        res
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn it_works() {
-        assert_eq!(2 + 2, 4);
     }
 }
