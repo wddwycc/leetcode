@@ -1,7 +1,7 @@
 pub struct SegmentTree {
     pub start: usize,
     pub end: usize,
-    pub dist: Vec<usize>,
+    pub dist: Vec<bool>,
     pub left: Option<Box<SegmentTree>>,
     pub right: Option<Box<SegmentTree>>,
 }
@@ -10,8 +10,8 @@ impl SegmentTree {
     // O(n)
     pub fn new(start: usize, end: usize, vals: &[i32]) -> Self {
         if start == end {
-            let mut dist = vec![0; 100];
-            dist[vals[start] as usize - 1] = 1;
+            let mut dist = vec![false; 100];
+            dist[vals[start] as usize - 1] = true;
             return Self {
                 start,
                 end,
@@ -23,9 +23,9 @@ impl SegmentTree {
         let mid = start + (end - start) / 2;
         let left = Self::new(start, mid, vals);
         let right = Self::new(mid + 1, end, vals);
-        let mut dist = vec![0; 100];
+        let mut dist = vec![false; 100];
         for i in 0..100 {
-            dist[i] = left.dist[i] + right.dist[i];
+            dist[i] = left.dist[i] || right.dist[i];
         }
         Self {
             start,
@@ -37,7 +37,7 @@ impl SegmentTree {
     }
 
     // O(logn)
-    pub fn query(&self, start: usize, end: usize) -> Vec<usize> {
+    pub fn query(&self, start: usize, end: usize) -> Vec<bool> {
         // NOTE: Exact match
         if self.start == start && self.end == end {
             return self.dist.clone();
@@ -53,9 +53,9 @@ impl SegmentTree {
         } else {
             let left = self.left.as_ref().unwrap().query(start, mid);
             let right = self.right.as_ref().unwrap().query(mid + 1, end);
-            let mut dist = vec![0; 100];
+            let mut dist = vec![false; 100];
             for i in 0..100 {
-                dist[i] = left[i] + right[i];
+                dist[i] = left[i] || right[i];
             }
             return dist;
         }
@@ -75,7 +75,7 @@ impl Solution {
                 let mut prev: Option<usize> = None;
                 let mut res: Option<usize> = None;
                 for i in 0..100 {
-                    if dist[i] == 0 {
+                    if !dist[i] {
                         continue;
                     }
                     match (prev, res) {
@@ -83,9 +83,11 @@ impl Solution {
                             prev = Some(i);
                         }
                         (Some(prev_), None) => {
+                            prev = Some(i);
                             res = Some(i - prev_);
                         }
                         (Some(prev_), Some(res_)) => {
+                            prev = Some(i);
                             res = Some(res_.min(i - prev_));
                         }
                         _ => (),
