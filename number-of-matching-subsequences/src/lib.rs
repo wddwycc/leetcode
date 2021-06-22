@@ -5,10 +5,9 @@ impl Solution {
     pub fn num_matching_subseq(s: String, words: Vec<String>) -> i32 {
         let mut words = {
             let mut res = HashMap::new();
-            for word in words {
-                let (head, word) = word.split_at(1);
-                let head = head.chars().next().unwrap();
-                res.entry(head).or_insert(vec![]).push(word.to_string());
+            for mut word in words {
+                let head = word.remove(0);
+                res.entry(head).or_insert(vec![]).push(word);
             }
             res
         };
@@ -18,14 +17,13 @@ impl Solution {
                 Some(a) => a,
                 None => continue,
             };
-            for word in matched_words {
+            for mut word in matched_words {
                 if word.len() == 0 {
                     ans += 1;
                     continue;
                 }
-                let (head, word) = word.split_at(1);
-                let head = head.chars().next().unwrap();
-                words.entry(head).or_insert(vec![]).push(word.to_string());
+                let head = word.remove(0);
+                words.entry(head).or_insert(vec![]).push(word);
             }
         }
         ans
