@@ -1,4 +1,4 @@
-#[derive(Clone, PartialEq, Eq, Debug)]
+#[derive(Clone)]
 pub enum NodeState {
     Idle,
     Checking,
@@ -25,47 +25,32 @@ impl Solution {
             }
             res
         };
-        // NOTE: Ensure destination has no outgoing edge
-        if adjacency_list[destination].len() > 0 {
-            return false;
-        }
+        let mut states = vec![NodeState::Idle; n];
+        Self::dfs(&adjacency_list, destination, source, &mut states)
+    }
 
-        let mut node_states = vec![NodeState::Idle; n];
-        let mut stack = vec![];
-        stack.push(source);
-        while let Some(u) = stack.pop() {
-            match node_states[u] {
-                NodeState::Idle => {
-                    node_states[u] = NodeState::Checking;
-                    if u == destination {
-                        for i in 0..n {
-                            if node_states[i] == NodeState::Checking {
-                                node_states[i] = NodeState::Checked;
-                            }
-                        }
-                        continue;
-                    }
-                    let outging_edges = &adjacency_list[u];
-                    if outging_edges.len() == 0 {
+    fn dfs(
+        adjacency_list: &[Vec<usize>],
+        destination: usize,
+        u: usize,
+        states: &mut Vec<NodeState>,
+    ) -> bool {
+        match states[u] {
+            NodeState::Idle => {
+                if adjacency_list[u].len() == 0 {
+                    return u == destination;
+                }
+                states[u] = NodeState::Checking;
+                for &v in &adjacency_list[u] {
+                    if !Self::dfs(adjacency_list, destination, v, states) {
                         return false;
                     }
-                    for &v in outging_edges {
-                        if u == v {
-                            return false;
-                        }
-                        stack.push(v);
-                    }
                 }
-                NodeState::Checking => return false,
-                NodeState::Checked => {
-                    for i in 0..n {
-                        if node_states[i] == NodeState::Checking {
-                            node_states[i] = NodeState::Checked;
-                        }
-                    }
-                }
+                states[u] = NodeState::Checked;
+                return true;
             }
+            NodeState::Checking => false,
+            NodeState::Checked => true,
         }
-        true
     }
 }
