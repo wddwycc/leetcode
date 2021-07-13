@@ -21,71 +21,37 @@ impl TreeNode {
 
 pub struct Solution;
 impl Solution {
-    fn helper(l: i32, r: i32) -> Vec<Rc<RefCell<TreeNode>>> {
-        match r - l {
-            0 => vec![Rc::new(RefCell::new(TreeNode::new(l)))],
-            1 => vec![
-                Rc::new(RefCell::new(TreeNode {
-                    val: l,
-                    left: None,
-                    right: Some(Rc::new(RefCell::new(TreeNode::new(r)))),
-                })),
-                Rc::new(RefCell::new(TreeNode {
-                    val: r,
-                    left: Some(Rc::new(RefCell::new(TreeNode::new(l)))),
-                    right: None,
-                })),
-            ],
-            _ => {
-                let mut res = vec![];
-                Self::helper(l + 1, r)
-                    .into_iter()
-                    .map(|node| {
-                        Rc::new(RefCell::new(TreeNode {
-                            val: l,
-                            left: None,
-                            right: Some(node),
-                        }))
-                    })
-                    .for_each(|a| res.push(a));
-                for pivot in (l + 1)..=(r - 1) {
-                    for i in Self::helper(l, pivot - 1).iter() {
-                        for j in Self::helper(pivot + 1, r).iter() {
-                            res.push(Rc::new(RefCell::new(TreeNode {
-                                val: pivot,
-                                left: Some(i.clone()),
-                                right: Some(j.clone()),
-                            })))
-                        }
-                    }
-                }
-                Self::helper(l, r - 1)
-                    .into_iter()
-                    .map(|node| {
-                        Rc::new(RefCell::new(TreeNode {
-                            val: r,
-                            left: Some(node),
-                            right: None,
-                        }))
-                    })
-                    .for_each(|a| res.push(a));
-                res
-            }
-        }
+    pub fn generate_trees(n: i32) -> Vec<Option<Rc<RefCell<TreeNode>>>> {
+        Self::helper(1, n)
     }
 
-    pub fn generate_trees(n: i32) -> Vec<Option<Rc<RefCell<TreeNode>>>> {
-        if n == 0 {
-            vec![]
-        } else {
-            Self::helper(1, n).into_iter().map(|a| Some(a)).collect()
+    fn helper(l: i32, r: i32) -> Vec<Option<Rc<RefCell<TreeNode>>>> {
+        if l == r {
+            return vec![Some(Rc::new(RefCell::new(TreeNode::new(l))))];
         }
-    }
-}
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn it_works() {
-        assert_eq!(2 + 2, 4);
+        let mut res = vec![];
+        for pivot in l..=r {
+            let l_trees = if pivot == l {
+                vec![None]
+            } else {
+                Self::helper(l, pivot - 1)
+            };
+            let r_trees = if pivot == r {
+                vec![None]
+            } else {
+                Self::helper(pivot + 1, r)
+            };
+            for i in 0..l_trees.len() {
+                for j in 0..r_trees.len() {
+                    let tree = TreeNode {
+                        val: pivot,
+                        left: l_trees[i].clone(),
+                        right: r_trees[j].clone(),
+                    };
+                    res.push(Some(Rc::new(RefCell::new(tree))));
+                }
+            }
+        }
+        res
     }
 }
