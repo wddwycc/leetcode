@@ -7,15 +7,15 @@ impl Solution {
             buckets[(b - b'a') as usize] += 1;
         }
         let mut ans = "".to_owned();
-        for c in order.chars() {
-            let idx = (c as u8 - 'a' as u8) as usize;
+        for b in order.bytes() {
+            let idx = (b - b'a') as usize;
             for _ in 0..buckets[idx] {
-                ans.push(c);
+                ans.push(b as char);
             }
             buckets[idx] = 0;
         }
         for (idx, &size) in buckets.iter().enumerate() {
-            let c = ('a' as u8 + idx as u8) as char;
+            let c = (b'a' + idx as u8) as char;
             for _ in 0..size {
                 ans.push(c);
             }
