@@ -1,9 +1,8 @@
 pub struct Solution;
 impl Solution {
     pub fn custom_sort_string(order: String, str: String) -> String {
-        let s = str.into_bytes();
         let mut buckets = vec![0; 26];
-        for b in s {
+        for b in str.bytes() {
             buckets[(b - b'a') as usize] += 1;
         }
         let mut ans = "".to_owned();
