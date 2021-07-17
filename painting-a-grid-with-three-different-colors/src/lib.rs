@@ -5,43 +5,42 @@ impl Solution {
     pub fn color_the_grid(m: i32, n: i32) -> i32 {
         let m = m as usize;
         let n = n as usize;
-        Self::dfs_ct(m, n, 0, 0, &mut HashMap::new(), &mut HashMap::new()) as i32
+        Self::dfs_ct(m, n, 0, &mut HashMap::new(), &mut HashMap::new()) as i32
     }
 
     fn dfs_ct(
         m: usize,
-        n: usize,
-        prev: u16,
         i: usize,
-        next_col_cache: &mut HashMap<u16, Vec<u16>>,
+        prev: u16,
+        next_cols_cache: &mut HashMap<u16, Vec<u16>>,
         ct_cache: &mut HashMap<(u16, usize), usize>,
     ) -> usize {
-        if let Some(cached) = ct_cache.get(&(prev, n - i)) {
+        if i == 0 {
+            return 1;
+        }
+        if let Some(cached) = ct_cache.get(&(prev, i)) {
             return *cached;
         }
 
-        let next_cols = match next_col_cache.get(&prev) {
+        let next_cols = match next_cols_cache.get(&prev) {
             Some(a) => a.clone(),
             None => {
                 let mut res = vec![];
-                Self::dfs(m, prev, 0, 0, &mut res);
-                next_col_cache.insert(prev, res.clone());
+                Self::calc_next_cols(m, prev, 0, 0, &mut res);
+                next_cols_cache.insert(prev, res.clone());
                 res
             }
         };
-        if i + 1 == n {
-            return next_cols.len();
-        }
         let mut ans = 0;
         for col in next_cols {
-            ans += Self::dfs_ct(m, n, col, i + 1, next_col_cache, ct_cache);
+            ans += Self::dfs_ct(m, i - 1, col, next_cols_cache, ct_cache);
             ans %= 1_000_000_007;
         }
-        ct_cache.insert((prev, n - i), ans);
+        ct_cache.insert((prev, i), ans);
         return ans;
     }
 
-    fn dfs(m: usize, prev: u16, i: usize, acc: u16, res: &mut Vec<u16>) {
+    fn calc_next_cols(m: usize, prev: u16, i: usize, acc: u16, res: &mut Vec<u16>) {
         if i == m {
             res.push(acc);
             return;
@@ -74,13 +73,13 @@ impl Solution {
             }
         }
         if r {
-            Self::dfs(m, prev, i + 1, acc | 1 << i * 2, res);
+            Self::calc_next_cols(m, prev, i + 1, acc | 1 << i * 2, res);
         }
         if g {
-            Self::dfs(m, prev, i + 1, acc | 2 << i * 2, res);
+            Self::calc_next_cols(m, prev, i + 1, acc | 2 << i * 2, res);
         }
         if b {
-            Self::dfs(m, prev, i + 1, acc | 3 << i * 2, res);
+            Self::calc_next_cols(m, prev, i + 1, acc | 3 << i * 2, res);
         }
     }
 }
