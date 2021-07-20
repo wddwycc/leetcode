@@ -31,7 +31,7 @@ impl Solution {
         let n = self.shuffled.len();
         // NOTE: Fisher–Yates shuffle
         for i in 0..(n - 1) {
-            let uniform = Uniform::from(i..=(n - 1));
+            let uniform = Uniform::from(i..n);
             let j = self.rng.sample(uniform);
             self.shuffled.swap(i, j);
         }
