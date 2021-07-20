@@ -21,7 +21,8 @@ impl Solution {
     }
 
     /** Resets the array to its original configuration and return it. */
-    fn reset(&self) -> Vec<i32> {
+    fn reset(&mut self) -> Vec<i32> {
+        self.shuffled = self.origin.clone();
         self.origin.clone()
     }
 
