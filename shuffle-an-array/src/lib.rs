@@ -1,6 +1,5 @@
-use rand::rngs::ThreadRng;
-use rand::seq::SliceRandom;
-use rand::thread_rng;
+use rand::distributions::Uniform;
+use rand::prelude::*;
 
 struct Solution {
     origin: Vec<i32>,
@@ -20,19 +19,21 @@ impl Solution {
             rng: thread_rng(),
         }
     }
+
     /** Resets the array to its original configuration and return it. */
     fn reset(&self) -> Vec<i32> {
         self.origin.clone()
     }
+
     /** Returns a random shuffling of the array. */
     fn shuffle(&mut self) -> Vec<i32> {
-        self.shuffled.shuffle(&mut self.rng);
+        let n = self.shuffled.len();
+        // NOTE: Fisher–Yates shuffle
+        for i in 0..(n - 1) {
+            let uniform = Uniform::from(i..=(n - 1));
+            let j = self.rng.sample(uniform);
+            self.shuffled.swap(i, j);
+        }
         self.shuffled.clone()
     }
-}
-
-fn main() {
-    let mut obj = Solution::new(vec![1, 2, 3]);
-    let ret_1: Vec<i32> = obj.reset();
-    let ret_2: Vec<i32> = obj.shuffle();
 }
